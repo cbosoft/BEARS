@@ -1,16 +1,16 @@
 #pragma once
-#include <vector>
+#include "vec.hpp"
 
 struct BallConstructorData {
   double diameter;
   double mass;
   double roughness;
-  std::vector<double> position;
-  std::vector<double> orientation;
-  std::vector<double> velocity;
-  std::vector<double> angular_velocity;
-  std::vector<double> force;
-  std::vector<double> torque;
+  Vec position;
+  Vec orientation;
+  Vec velocity;
+  Vec angular_velocity;
+  Vec force;
+  Vec torque;
 };
 
 class Ball {
@@ -18,14 +18,14 @@ class Ball {
   //private:
   public:
 
-    std::vector<double> position;
-    std::vector<double> orientation;
+    Vec position;
+    Vec orientation;
 
-    std::vector<double> velocity;
-    std::vector<double> angular_velocity;
+    Vec velocity;
+    Vec angular_velocity;
 
-    std::vector<double> force;
-    std::vector<double> torque;
+    Vec force;
+    Vec torque;
 
     double roughness;
     double mass;
