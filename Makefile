@@ -2,6 +2,9 @@ CXX = g++
 CFLAGS = -g -Wall -Wextra -Werror -std=c++17 -O0
 OBJ = \
 			obj/ball.o \
+			obj/sim_io.o \
+			obj/sim_run.o \
+			obj/event.o \
 			obj/main.o
 
 LINK = 
