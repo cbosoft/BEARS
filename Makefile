@@ -4,7 +4,7 @@ OBJ = \
 			obj/ball.o \
 			obj/main.o
 
-LINK = -lm
+LINK = 
 EXE = BEARS
 
 .SECONDARY:
