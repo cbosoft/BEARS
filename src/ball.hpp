@@ -32,6 +32,7 @@ class Ball {
     double diameter;
 
 
+    Ball() =default;
     Ball(struct BallConstructorData);
     ~Ball();
 
