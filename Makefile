@@ -28,4 +28,4 @@ configgen: obj/config_main.o $(OBJ)
 	$(CXX) $(CFLAGS) obj/config_main.o $(OBJ) -o $@ $(LINK)
 
 clean:
-	rm -rf obj $(EXE)
+	rm -rf obj $(EXE) configgen
