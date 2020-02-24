@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 #include "vec.hpp"
 
 struct BallConstructorData {
@@ -34,6 +35,7 @@ class Ball {
 
     Ball() =default;
     Ball(struct BallConstructorData);
+    Ball(const std::string s);
     ~Ball();
 
 };
