@@ -37,7 +37,6 @@ class Ball {
     double diameter;
 
 
-    Ball() =default;
     Ball(const struct BallConstructorData &bcd);
     Ball(const std::string s);
     ~Ball();

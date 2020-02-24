@@ -8,6 +8,7 @@
 CollisionCheckResult *collision_check(Ball *a, Ball *b)
 {
   CollisionCheckResult *rv = new CollisionCheckResult;
+
   Vec dV = a->velocity - b->velocity;
   Vec dP = a->position - b->position;
   double A = dV.dot(dV);

@@ -78,7 +78,7 @@ void Sim::update_events()
   }
 
   for (unsigned int i = 0; i < nchunks; i++) {
-    struct par_event_check_out * output = async_threads[i].get();
+    struct par_event_check_out *output = async_threads[i].get();
     delete inputs[i];
     for (auto event : output->events) {
       this->events.push_back(event);
