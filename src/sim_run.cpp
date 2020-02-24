@@ -35,10 +35,15 @@ static struct par_event_check_out *parallelCollisionCheckWorker(struct par_event
     auto a = input->sim->get_ball(i);
     for (unsigned int j = 0; j < i; j++) {
       auto b = input->sim->get_ball(j);
+
+      if (a == b)
+        continue;
+
       CollisionCheckResult *cer = collision_check(a, b);
       if (cer->will_occur) {
         output->events.push_back(cer->event);
       }
+      delete cer;
     }
   }
 
