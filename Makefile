@@ -4,22 +4,28 @@ OBJ = \
 			obj/ball.o \
 			obj/sim_io.o \
 			obj/sim_run.o \
-			obj/event.o \
-			obj/main.o
+			obj/sim.o \
+			obj/vec.o \
+			obj/random.o \
+			obj/event.o
 
 LINK = 
 EXE = BEARS
 
 .SECONDARY:
 
-obj/%.o: src/%.cpp $(HDR)
+obj/%.o: src/%.cpp
 	@echo -e "\u001b[33mASSEMBLING OBJECT $@\u001b[0m"
 	mkdir -p `dirname $@`
 	$(CXX) $(CFLAGS) $< -c -o $@
 
-BEARS: $(OBJ) $(HDR)
+BEARS: obj/main.o $(OBJ)
 	@echo -e "\u001b[34mLINKING OBJECTS TO EXECUTABLE $@\u001b[0m"
-	$(CXX) $(CFLAGS) $(OBJ) -o $@ $(LINK)
+	$(CXX) $(CFLAGS) obj/main.o $(OBJ) -o $@ $(LINK)
+
+configgen: obj/config_main.o $(OBJ)
+	@echo -e "\u001b[34mLINKING OBJECTS TO EXECUTABLE $@\u001b[0m"
+	$(CXX) $(CFLAGS) obj/config_main.o $(OBJ) -o $@ $(LINK)
 
 clean:
 	rm -rf obj $(EXE)
