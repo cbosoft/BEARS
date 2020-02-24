@@ -4,6 +4,7 @@
 #include "vec.hpp"
 
 struct BallConstructorData {
+  int id;
   double diameter;
   double mass;
   double roughness;
@@ -20,6 +21,7 @@ class Ball {
   //private:
   public:
 
+    int id;
     Vec position;
     Vec orientation;
 

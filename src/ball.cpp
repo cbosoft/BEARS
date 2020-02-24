@@ -2,6 +2,7 @@
 
 Ball::Ball(const struct BallConstructorData &bcd)
 {
+  this->id = bcd.id;
   this->mass = bcd.mass;
   this->diameter = bcd.diameter;
   this->roughness = bcd.roughness;
@@ -19,6 +20,7 @@ Ball::Ball(const struct BallConstructorData &bcd)
 Ball::Ball(const std::string s)
 {
   std::stringstream ss(s);
+  ss >> this->id;
   ss >> this->mass;
   ss >> this->diameter;
   ss >> this->roughness;
@@ -46,6 +48,7 @@ Ball::Ball(const std::string s)
 std::string Ball::to_tsv() const
 {
   std::stringstream ss;
+  ss << this->id << "\t";
   ss << this->mass << "\t";
   ss << this->diameter << "\t";
   ss << this->roughness << "\t";

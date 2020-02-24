@@ -54,6 +54,7 @@ int main(int argc, const char **argv)
   double sep = args.separation;
 
   struct BallConstructorData bcd;
+  bcd.id = 0;
   bcd.mass = args.mass;
   bcd.diameter = args.diameter;
   bcd.roughness = args.roughness;
@@ -62,6 +63,7 @@ int main(int argc, const char **argv)
   for (int xi = 0; xi < xn; xi++) {
     for (int yi = 0; yi < yn; yi++) {
       for (int zi = 0; zi < zn; zi++) {
+        bcd.id++;
         bcd.position = {sep*xi, sep*yi, sep*zi};
         bcd.velocity = vec_nrand(0, 1.0) * args.velocity_mag;
         sim.add_ball(bcd);
