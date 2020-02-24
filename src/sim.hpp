@@ -19,6 +19,7 @@ class Sim {
     std::string configuration_file_path;
 
     void update_events();
+    void clear_events();
 
   public:
 

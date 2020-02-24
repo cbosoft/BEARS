@@ -6,7 +6,7 @@
 
 void Sim::update_events()
 {
-  this->events.erase(this->events.begin(), this->events.end());
+  this->clear_events();
 
   auto a = this->balls.begin();
   auto b = this->balls.begin();
@@ -20,6 +20,15 @@ void Sim::update_events()
   }
 
   this->events.sort();
+}
+
+
+void Sim::clear_events()
+{
+  for (auto event : this->events) {
+    free(event);
+  }
+  this->events.erase(this->events.begin(), this->events.end());
 }
 
 
