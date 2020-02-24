@@ -11,21 +11,22 @@ OBJ = \
 
 LINK = 
 EXE = BEARS
+DEFS = -DPARALLEL -DN_THREADS=10
 
 .SECONDARY:
 
 obj/%.o: src/%.cpp
 	@echo -e "\u001b[33mASSEMBLING OBJECT $@\u001b[0m"
 	mkdir -p `dirname $@`
-	$(CXX) $(CFLAGS) $< -c -o $@
+	$(CXX) $(CFLAGS) $(DEFS) $< -c -o $@
 
 BEARS: obj/main.o $(OBJ)
 	@echo -e "\u001b[34mLINKING OBJECTS TO EXECUTABLE $@\u001b[0m"
-	$(CXX) $(CFLAGS) obj/main.o $(OBJ) -o $@ $(LINK)
+	$(CXX) $(CFLAGS) $(DEFS) obj/main.o $(OBJ) -o $@ $(LINK)
 
 configgen: obj/config_main.o $(OBJ)
 	@echo -e "\u001b[34mLINKING OBJECTS TO EXECUTABLE $@\u001b[0m"
-	$(CXX) $(CFLAGS) obj/config_main.o $(OBJ) -o $@ $(LINK)
+	$(CXX) $(CFLAGS) $(DEFS) obj/config_main.o $(OBJ) -o $@ $(LINK)
 
 clean:
 	rm -rf obj $(EXE) configgen

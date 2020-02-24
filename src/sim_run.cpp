@@ -1,25 +1,101 @@
 #include <iostream>
+#include <csignal>
+
+#ifdef PARALLEL
+#include <future>
+#endif
 
 #include "sim.hpp"
 #include "event.hpp"
 
+static bool event_compare_f(const CollisionEvent *a, const CollisionEvent *b)
+{
+  return a->get_time() < b->get_time();
+}
+
+#ifdef PARALLEL
+
+struct par_event_check_out {
+  std::list<CollisionEvent *> events;
+};
+
+struct par_event_check_in {
+  Sim *sim;
+  unsigned int to;
+  unsigned int from;
+};
+
+
+static struct par_event_check_out *parallelCollisionCheckWorker(struct par_event_check_in *input)
+{
+  struct par_event_check_out *output = new struct par_event_check_out;
+  output->events = std::list<CollisionEvent *>();
+  
+  for (unsigned int i = input->from; i < input->to; i++) {
+    auto a = input->sim->get_ball(i);
+    for (unsigned int j = 0; j < i; j++) {
+      auto b = input->sim->get_ball(j);
+      CollisionCheckResult *cer = collision_check(a, b);
+      if (cer->will_occur) {
+        output->events.push_back(cer->event);
+      }
+    }
+  }
+
+  return output;
+}
+
+#endif
 
 void Sim::update_events()
 {
   this->clear_events();
 
-  auto a = this->balls.begin();
-  auto b = this->balls.begin();
-  for (int i = 0; a != this->balls.end(); i++, a++) {
-    for (int j = 0; b != this->balls.end() && j < i; j++, b++) {
-      CollisionCheckResult *cer = collision_check(*a, *b);
+#ifdef PARALLEL
+  unsigned int nchunks = this->balls.size()/N_THREADS;
+  unsigned int chunklen = this->balls.size() / nchunks;
+  
+  if (this->balls.size() % nchunks != 0)
+    nchunks++;
+
+  std::vector<std::future<struct par_event_check_out *>> async_threads;
+  std::vector<struct par_event_check_in *> inputs;
+  for (unsigned int i = 0; i < nchunks; i++) {
+    struct par_event_check_in *input = new struct par_event_check_in;
+    input->sim = this;
+    input->from = i*chunklen;
+    input->to = (i+1)*chunklen;
+    if ((i+1) > (this->balls.size()-1))
+      input->to = this->balls.size()-1;
+    inputs.push_back(input);
+    async_threads.push_back(std::async(parallelCollisionCheckWorker, input));
+  }
+
+  for (unsigned int i = 0; i < nchunks; i++) {
+    struct par_event_check_out * output = async_threads[i].get();
+    free(inputs[i]);
+    for (auto event : output->events) {
+      this->events.push_back(event);
+    }
+    free(output);
+  }
+
+#else
+
+  for (unsigned int i = 0; i < this->balls.size(); i++) {
+    auto a = this->balls[i];
+    for (unsigned int j = 0; j < i; j++) {
+      auto b = this->balls[j];
+      CollisionCheckResult *cer = collision_check(a, b);
       if (cer->will_occur) {
         this->events.push_back(cer->event);
       }
     }
   }
 
-  this->events.sort();
+#endif
+
+  this->events.sort(event_compare_f);
 }
 
 
@@ -33,10 +109,34 @@ void Sim::clear_events()
 
 
 
+static volatile bool cancelled;
+
+static void handler(int signal)
+{
+  (void) signal;
+
+  static int i = 0;
+  
+  if (i++ > 10)
+    exit(1);
+
+  cancelled = true;
+}
+
+
+
 void Sim::run(double end_time)
 {
-  // TODO: parallelise.
-  while (this->time < end_time) {
+  bool done = false, timed = true;
+
+  if (end_time < 0.0) {
+    std::cerr << "running until cancelled" << std::endl;
+    timed = false;
+  }
+
+  std::signal(SIGINT, handler);
+
+  while (!done) {
     this->update_events();
 
     if (!this->events.size()) {
@@ -46,7 +146,7 @@ void Sim::run(double end_time)
 
     auto event = this->events.front();
     for (auto b: this->balls) {
-      b->position = b->position + b->velocity*event->get_time();
+      b->position = b->position + (b->velocity*event->get_time());
     }
     this->time += event->get_time();
 
@@ -54,12 +154,18 @@ void Sim::run(double end_time)
     auto a = event->get_a();
     auto b = event->get_b();
     double totmass = a->mass + b->mass;
-    a->velocity = (a->velocity*((a->mass - b->mass)/totmass)) + (b->velocity*(2.0*b->mass/totmass) );
-    b->velocity = (b->velocity*((b->mass - a->mass)/totmass)) + (a->velocity*(2.0*a->mass/totmass) );
-    // Vec temp = a->velocity;
-    // a->velocity = b->velocity;
-    // b->velocity = temp;
+    Vec new_a_velocity = (a->velocity*((a->mass - b->mass)/totmass)) + (b->velocity*(2.0*b->mass/totmass) );
+    Vec new_b_velocity = (b->velocity*((b->mass - a->mass)/totmass)) + (a->velocity*(2.0*a->mass/totmass) );
+    a->velocity = new_a_velocity;
+    b->velocity = new_b_velocity;
+    // TODO friction, forces, torque, rotation?
+
     std::cerr << this->time << "\t(" << this->events.size() << ")\t" << a->repr() << "\t" << b->repr() << std::endl;
 
+    // TODO append step to output
+
+    done = ((timed && (this->time > end_time)) || (cancelled));
   }
+
+  std::signal(SIGINT, SIG_DFL);
 }
