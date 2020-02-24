@@ -60,6 +60,7 @@ int main(int argc, const char **argv)
   bcd.roughness = args.roughness;
 
   Sim sim;
+  int pperc = 0;
   for (int xi = 0; xi < xn; xi++) {
     for (int yi = 0; yi < yn; yi++) {
       for (int zi = 0; zi < zn; zi++) {
@@ -67,8 +68,15 @@ int main(int argc, const char **argv)
         bcd.position = {sep*xi, sep*yi, sep*zi};
         bcd.velocity = vec_nrand(0, 1.0) * args.velocity_mag;
         sim.add_ball(bcd);
+        int perc = bcd.id*100/n;
+        if (perc > pperc) {
+          std::cerr << '#';
+          pperc = perc;
+        }
       }
     }
   }
+  std::cerr << std::endl;
   sim.save_to_file(args.path);
+  std::cout << "done!" << std::endl;
 }
