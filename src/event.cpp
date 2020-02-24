@@ -17,12 +17,12 @@ CollisionCheckResult *collision_check(Ball *a, Ball *b)
   double discriminant = (B*B) - (4*A*C);
   double time = -1.0;
   if (discriminant < 0.0) {
-    std::cerr << "no collision" << std::endl;
+    //std::cerr << "no collision" << std::endl;
     rv->will_occur = false;
     return rv;
   }
   else if (discriminant == 0.0) {
-    std::cerr << "already collided" << std::endl;
+    //std::cerr << "already collided" << std::endl;
     rv->will_occur = false;
     return rv;
   }
@@ -32,14 +32,14 @@ CollisionCheckResult *collision_check(Ball *a, Ball *b)
     double bigsol = (-B + discriminant_root) / (2.0 * A);
     double lilsol = (-B - discriminant_root) / (2.0 * A);
     if ((bigsol == 0.0) || (lilsol == 0.0)) {
-      std::cerr << "both results zero" << std::endl;
+      //std::cerr << "both results zero" << std::endl;
       rv->will_occur = false;
       return rv;
     }
 
     if (lilsol < 0.0) {
       if (bigsol < 0.0) {
-        std::cerr << "both results negative" << std::endl;
+        //std::cerr << "both results negative" << std::endl;
         time = 0.0;
         rv->will_occur = false;
       }
