@@ -7,17 +7,27 @@
 
 int main(int argc, const char **argv)
 {
-  --argc; ++argv;
-  std::string config_file;
-  bool config_file_set = false;
+
+  struct {
+    std::string config_file_path;
+    double end_time;
+  } args = {
+    "config.ssv", 
+    10.0
+  };
 
   // TODO: improve arg parsing
   // TODO: check given path exists and is an ssv
+  --argc; ++argv;
   for (int i = 0; i < argc; i++) {
     if (EITHER("-c", "--config-file")) {
-      i++;
-      config_file = std::string(argv[i]);
-      config_file_set = true;
+      args.config_file_path = std::string(argv[++i]);
+    }
+    else if (EITHER("-t", "--end-time")) {
+      args.end_time = atof(argv[++i]);
+    }
+    else if (EITHER("-e", "--endless")) {
+      args.end_time = -1;
     }
     else {
       std::cerr << "unknown arg: " << argv[i] << std::endl;
@@ -25,11 +35,6 @@ int main(int argc, const char **argv)
     }
   }
 
-  if (!config_file_set) {
-    std::cerr << "need arg: config file path" << std::endl;
-    exit(1);
-  }
-
-  Sim sim(config_file);
-  sim.run(10);
+  Sim sim(args.config_file_path);
+  sim.run(args.end_time);
 }
