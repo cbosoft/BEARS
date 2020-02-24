@@ -31,6 +31,8 @@ class Sim {
     void append_to_trajectory() const;
     void save_to_file(std::string path) const;
 
+    void add_ball(const struct BallConstructorData &bcd);
+
     void run(double end_time);
 
 };
