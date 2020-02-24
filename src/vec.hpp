@@ -21,14 +21,14 @@ class Vec {
     std::string repr() const
     {
       std::stringstream ss;
-      ss << "[" << this->i << ", " << this->j << ", " << this->k << "]";
+      ss << "[" << this->i << ",\t" << this->j << ",\t" << this->k << "]";
       return ss.str();
     }
 
-    std::string to_ssv() const
+    std::string to_tsv() const
     {
       std::stringstream ss;
-      ss << this->i << " " << this->j << " "  << this->k;
+      ss << this->i << "\t" << this->j << "\t"  << this->k;
       return ss.str();
     }
 

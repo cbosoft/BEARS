@@ -35,11 +35,10 @@ void Sim::clear_events()
 
 void Sim::run(double end_time)
 {
-  int i = 0;
+  // TODO: parallelise.
   while (this->time < end_time) {
     this->update_events();
 
-    std::cerr << this->events.size() << std::endl;
     if (!this->events.size()) {
       std::cerr << "no events" << std::endl;
       break;
@@ -61,8 +60,6 @@ void Sim::run(double end_time)
     // a->velocity = b->velocity;
     // b->velocity = temp;
 
-    std::cerr << i++ << ") " << this->time << " " << a->velocity.repr() << "  " << b->velocity.repr() << std::endl;
-    if (i > 3)
-      break;
+    std::cerr << this->time << "\t(" << this->events.size() << ")\t" << a->velocity.repr() << "\t" << b->velocity.repr() << std::endl;
   }
 }

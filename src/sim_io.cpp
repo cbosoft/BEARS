@@ -31,7 +31,7 @@ void Sim::save_to_file(std::string path) const
   std::ofstream of(path, std::ios::trunc);
 
   for (auto ball : this->balls) {
-    of << ball->to_ssv() << std::endl;
+    of << ball->to_tsv() << std::endl;
   }
 
 }
