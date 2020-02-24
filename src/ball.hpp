@@ -34,7 +34,7 @@ class Ball {
 
 
     Ball() =default;
-    Ball(struct BallConstructorData);
+    Ball(const struct BallConstructorData &bcd);
     Ball(const std::string s);
     ~Ball();
 

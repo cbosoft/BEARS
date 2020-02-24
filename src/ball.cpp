@@ -1,19 +1,21 @@
 #include "ball.hpp"
 
-Ball::Ball(struct BallConstructorData data)
+Ball::Ball(const struct BallConstructorData &bcd)
 {
-  this->diameter = data.diameter;
-  this->mass = data.mass;
-  this->roughness = data.roughness;
+  this->mass = bcd.mass;
+  this->diameter = bcd.diameter;
+  this->roughness = bcd.roughness;
 
-  this->position = data.position;
-  this->orientation = data.orientation;
+  this->position = bcd.position;
+  this->orientation = bcd.orientation;
 
-  this->velocity = data.velocity;
-  this->angular_velocity = data.angular_velocity;
+  this->velocity = bcd.velocity;
+  this->angular_velocity = bcd.angular_velocity;
 
-  this->force = data.force;
-  this->torque = data.torque;
+  this->force = bcd.force;
+  this->torque = bcd.torque;
+}
+
 Ball::Ball(const std::string s)
 {
   std::stringstream ss(s);
