@@ -22,7 +22,7 @@ void Sim::load_from_file(std::string path)
 }
 
 
-// void Sim::append_to_file(std::string path) const
+// void Sim::append_to_trajectory(std::string path) const
 // {
 // }
 
