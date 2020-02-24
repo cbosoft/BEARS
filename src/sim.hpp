@@ -1,7 +1,6 @@
 #pragma once
 
 #include <list>
-#include <array>
 
 #include "vec.hpp"
 #include "ball.hpp"
