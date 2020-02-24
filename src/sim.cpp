@@ -3,7 +3,7 @@
 Sim::~Sim()
 {
   for (auto ball : this->balls) {
-    free(ball);
+    delete ball;
   }
 }
 

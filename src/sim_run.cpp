@@ -73,11 +73,11 @@ void Sim::update_events()
 
   for (unsigned int i = 0; i < nchunks; i++) {
     struct par_event_check_out * output = async_threads[i].get();
-    free(inputs[i]);
+    delete inputs[i];
     for (auto event : output->events) {
       this->events.push_back(event);
     }
-    free(output);
+    delete output;
   }
 
 #else
@@ -90,6 +90,7 @@ void Sim::update_events()
       if (cer->will_occur) {
         this->events.push_back(cer->event);
       }
+      delete cer;
     }
   }
 
@@ -102,7 +103,7 @@ void Sim::update_events()
 void Sim::clear_events()
 {
   for (auto event : this->events) {
-    free(event);
+    delete event;
   }
   this->events.erase(this->events.begin(), this->events.end());
 }
@@ -135,6 +136,7 @@ void Sim::run(double end_time)
   }
 
   std::signal(SIGINT, handler);
+  this->time = 0.0;
 
   while (!done) {
     this->update_events();
