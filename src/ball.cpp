@@ -64,3 +64,13 @@ std::string Ball::to_tsv() const
 Ball::~Ball()
 {
 }
+
+std::string Ball::repr() const
+{
+  std::stringstream ss;
+  ss << "Ball(" 
+    << this->id 
+    << ", " << this->position.repr()
+    << ")";
+  return ss.str();
+}

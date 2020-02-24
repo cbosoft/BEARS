@@ -22,6 +22,7 @@ class Ball {
   public:
 
     int id;
+
     Vec position;
     Vec orientation;
 
@@ -42,5 +43,6 @@ class Ball {
     ~Ball();
 
     std::string to_tsv() const;
+    std::string repr() const;
 
 };

@@ -59,7 +59,7 @@ void Sim::run(double end_time)
     // Vec temp = a->velocity;
     // a->velocity = b->velocity;
     // b->velocity = temp;
+    std::cerr << this->time << "\t(" << this->events.size() << ")\t" << a->repr() << "\t" << b->repr() << std::endl;
 
-    std::cerr << this->time << "\t(" << this->events.size() << ")\t" << a->velocity.repr() << "\t" << b->velocity.repr() << std::endl;
   }
 }
