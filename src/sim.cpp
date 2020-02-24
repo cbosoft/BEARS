@@ -28,3 +28,9 @@ void Sim::add_ball(const struct BallConstructorData &bcd)
   Ball *ball = new Ball(bcd);
   this->balls.push_back(ball);
 }
+
+
+Ball *Sim::get_ball(int i) const
+{
+  return this->balls[i];
+}

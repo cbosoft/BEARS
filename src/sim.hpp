@@ -1,17 +1,20 @@
 #pragma once
 
+#include <vector>
 #include <list>
 
 #include "vec.hpp"
 #include "ball.hpp"
 #include "event.hpp"
 
+
+
 class Sim {
 
   private:
 
     std::list<CollisionEvent *> events;
-    std::list<Ball *> balls;
+    std::vector<Ball *> balls;
     double time;
 
     std::string trajectory_file_path;
@@ -35,5 +38,7 @@ class Sim {
     void add_ball(const struct BallConstructorData &bcd);
 
     void run(double end_time);
+
+    Ball *get_ball(int index) const;
 
 };
