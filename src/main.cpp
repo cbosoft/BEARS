@@ -35,6 +35,9 @@ int main(int argc, const char **argv)
     }
   }
 
+  std::cerr << "reading config" << std::endl;
   Sim sim(args.config_file_path);
+
+  std::cerr << "begin!" << std::endl;
   sim.run(args.end_time);
 }
