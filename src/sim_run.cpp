@@ -140,9 +140,18 @@ void Sim::run(double end_time)
     std::cerr << "running until cancelled" << std::endl;
     timed = false;
   }
+  else {
+    std::cerr << "running until sim time exceeds " << end_time << "units" << std::endl;
+  }
+
+#ifdef PARALLEL
+  std::cerr << "parallel computation enabled" << std::endl;
+  std::cerr << "using " << N_THREADS << " threads" << std::endl;
+#endif
 
   std::signal(SIGINT, handler);
   this->time = 0.0;
+  double ptime = 0.0;
 
   while (!done) {
     this->update_events();
@@ -168,9 +177,13 @@ void Sim::run(double end_time)
     b->velocity = new_b_velocity;
     // TODO friction, forces, torque, rotation?
 
-    std::cerr << this->time << "\t(" << this->events.size() << ")\t" << a->repr() << "\t" << b->repr() << std::endl;
+    if (((int)this->time) > ptime) {
+      std::cerr << this->time << std::endl;
+      ptime = this->time;
+    }
 
     // TODO append step to output
+    //this->append_to_trajectory();
 
     done = ((timed && (this->time > end_time)) || (cancelled));
   }
