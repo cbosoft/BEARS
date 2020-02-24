@@ -30,6 +30,7 @@ class Sim {
     void load_from_file(std::string path);
     void append_to_trajectory() const;
     void save_to_file(std::string path) const;
+    void show_config() const;
 
     void add_ball(const struct BallConstructorData &bcd);
 

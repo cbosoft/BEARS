@@ -35,3 +35,11 @@ void Sim::save_to_file(std::string path) const
   }
 
 }
+
+
+void Sim::show_config() const
+{
+  for (auto ball : this->balls) {
+    std::cerr << ball->repr() << std::endl;
+  }
+}
