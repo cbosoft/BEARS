@@ -38,4 +38,6 @@ class Ball {
     Ball(const std::string s);
     ~Ball();
 
+    std::string to_ssv() const;
+
 };

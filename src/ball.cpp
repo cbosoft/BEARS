@@ -43,6 +43,21 @@ Ball::Ball(const std::string s)
   this->torque = {x, y, z};
 }
 
+std::string Ball::to_ssv() const
+{
+  std::stringstream ss;
+  ss << this->mass << " ";
+  ss << this->diameter << " ";
+  ss << this->roughness << " ";
+  ss << this->position.to_ssv() << " ";
+  ss << this->orientation.to_ssv() << " ";
+  ss << this->velocity.to_ssv() << " ";
+  ss << this->angular_velocity.to_ssv() << " ";
+  ss << this->force.to_ssv() << " ";
+  ss << this->torque.to_ssv() << " ";
+  return ss.str();
+}
+
 Ball::~Ball()
 {
 }
