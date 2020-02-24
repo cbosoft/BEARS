@@ -48,9 +48,9 @@ int main(int argc, const char **argv)
   }
 
   int n = args.n;
-  int xn = cbrt(n);
-  int yn = cbrt(n);
-  int zn = cbrt(n);
+  int xn = ceil(cbrt(n));
+  int yn = ceil(cbrt(n));
+  int zn = ceil(cbrt(n));
   double sep = args.separation;
 
   struct BallConstructorData bcd;
