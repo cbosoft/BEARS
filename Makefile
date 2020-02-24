@@ -9,7 +9,7 @@ OBJ = \
 			obj/random.o \
 			obj/event.o
 
-LINK = 
+LINK = -lpthread
 EXE = BEARS
 DEFS = -DPARALLEL -DN_THREADS=10
 
