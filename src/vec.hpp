@@ -73,3 +73,6 @@ class Vec {
     Vec operator*(const Vec &v) const { return this->cross(v); }
     Vec operator*(double m) const { return this->scalar_mult(m); }
 };
+
+Vec vec_urand(double min, double max);
+Vec vec_nrand(double mean, double std);
