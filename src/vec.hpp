@@ -25,6 +25,13 @@ class Vec {
       return ss.str();
     }
 
+    std::string to_ssv() const
+    {
+      std::stringstream ss;
+      ss << this->i << " " << this->j << " "  << this->k;
+      return ss.str();
+    }
+
     Vec add(const Vec &v) const
     {
       return Vec( this->i + v.i,
