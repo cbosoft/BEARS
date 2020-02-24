@@ -23,6 +23,7 @@ class Sim {
     ~Sim() =default;
     void load_from_file(std::string path);
     void append_to_file(std::string path) const;
+    void save_to_file(std::string path) const;
 
     void run(double end_time);
 

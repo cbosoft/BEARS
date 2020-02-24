@@ -1,6 +1,6 @@
-#include <string>
 #include <iostream>
 #include <fstream>
+#include <string>
 
 #include "sim.hpp"
 
@@ -25,3 +25,13 @@ void Sim::load_from_file(std::string path)
 // void Sim::append_to_file(std::string path) const
 // {
 // }
+
+void Sim::save_to_file(std::string path) const
+{
+  std::ofstream of(path, std::ios::trunc);
+
+  for (auto ball : this->balls) {
+    of << ball->to_ssv() << std::endl;
+  }
+
+}
