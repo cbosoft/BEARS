@@ -57,11 +57,12 @@ void Sim::update_events()
   this->clear_events();
 
 #ifdef PARALLEL
-  unsigned int nchunks = this->balls.size()/N_THREADS;
-  unsigned int chunklen = this->balls.size() / nchunks;
-  
+  unsigned int nchunks = N_THREADS;
+
   if (this->balls.size() % nchunks != 0)
     nchunks++;
+
+  unsigned int chunklen = this->balls.size() / nchunks;
 
   std::vector<std::future<struct par_event_check_out *>> async_threads;
   std::vector<struct par_event_check_in *> inputs;
