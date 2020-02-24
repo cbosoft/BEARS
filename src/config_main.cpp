@@ -16,7 +16,7 @@ int main(int argc, const char **argv)
     double roughness;
     double velocity_mag;
     std::string path;
-  } args = {9, 1.0, 1.0, 1.1, 0.0, 1.0, "config.ssv"};
+  } args = {9, 1.0, 1.0, 1.1, 0.0, 1.0, "config.tsv"};
 
   --argc; ++argv;
   for (int i = 0; i < argc; i++) {
@@ -77,6 +77,7 @@ int main(int argc, const char **argv)
     }
   }
   std::cerr << std::endl;
+  // sim.show_config();
   sim.save_to_file(args.path);
   std::cout << "done!" << std::endl;
 }
