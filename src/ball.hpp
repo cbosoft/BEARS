@@ -9,6 +9,7 @@ struct BallConstructorData {
   int id;
   double diameter;
   double mass;
+  double inertia;
   double roughness;
   Vec position;
   Vec orientation;
@@ -36,6 +37,7 @@ class Ball {
 
     double roughness;
     double mass;
+    double inertia;
     double diameter;
 
 

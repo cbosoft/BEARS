@@ -15,8 +15,9 @@ int main(int argc, const char **argv)
     double separation;
     double roughness;
     double velocity_mag;
+    double angular_velocity_mag;
     std::string path;
-  } args = {9, 1.0, 1.0, 1.1, 0.0, 1.0, "config.tsv"};
+  } args = {9, 1.0, 1.0, 1.1, 0.0, 1.0, 1.0, "config.tsv"};
 
   --argc; ++argv;
   for (int i = 0; i < argc; i++) {
@@ -37,6 +38,9 @@ int main(int argc, const char **argv)
     }
     else if (EITHER("-v", "--velocity")) {
       args.velocity_mag = atoi(argv[++i]);
+    }
+    else if (EITHER("-a", "--angular-velocity")) {
+      args.angular_velocity_mag = atoi(argv[++i]);
     }
     else if (EITHER("-p", "--path")) {
       args.path = argv[++i];
@@ -67,6 +71,7 @@ int main(int argc, const char **argv)
         bcd.id++;
         bcd.position = {sep*xi, sep*yi, sep*zi};
         bcd.velocity = vec_nrand(0, 1.0) * args.velocity_mag;
+        bcd.angular_velocity = vec_nrand(0, 1.0) * args.angular_velocity_mag;
         sim.add_ball(bcd);
         int perc = bcd.id*100/n;
         if (perc > pperc) {

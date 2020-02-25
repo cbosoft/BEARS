@@ -163,6 +163,7 @@ void Sim::run(double end_time)
     auto event = this->events.front();
     for (auto b: this->balls) {
       b->position = b->position + (b->velocity*event->get_time());
+      b->orientation = b->orientation + (b->angular_velocity*event->get_time());
     }
     this->time += event->get_time();
 
