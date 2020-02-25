@@ -13,15 +13,14 @@ class Sim {
 
   private:
 
-    std::list<CollisionEvent *> events;
+    CollisionEvent * event;
     std::vector<Ball *> balls;
     double time;
 
     std::string trajectory_file_path;
     std::string configuration_file_path;
 
-    void update_events();
-    void clear_events();
+    void find_next_event();
 
   public:
 
