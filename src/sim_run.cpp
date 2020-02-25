@@ -141,7 +141,7 @@ void Sim::run(double end_time)
     timed = false;
   }
   else {
-    std::cerr << "running until sim time exceeds " << end_time << "units" << std::endl;
+    std::cerr << "running until sim time exceeds " << end_time << " units" << std::endl;
   }
 
 #ifdef PARALLEL
@@ -151,7 +151,7 @@ void Sim::run(double end_time)
 
   std::signal(SIGINT, handler);
   this->time = 0.0;
-  double ptime = 0.0;
+  // double ptime = 0.0;
 
   while (!done) {
     this->update_events();
@@ -177,10 +177,7 @@ void Sim::run(double end_time)
     b->velocity = new_b_velocity;
     // TODO friction, forces, torque, rotation?
 
-    if (((int)this->time) > ptime) {
-      std::cerr << this->time << std::endl;
-      ptime = this->time;
-    }
+    std::cerr << this->time << std::endl;
 
     // TODO append step to output
     //this->append_to_trajectory();
