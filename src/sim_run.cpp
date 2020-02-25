@@ -174,9 +174,9 @@ void Sim::run(double end_time)
 
     std::cerr << this->time << std::endl;
 
-    // TODO append step to output
     this->append_to_trajectory();
 
+    // check if exit condition is satisfied
     done = ((timed && (this->time > end_time)) || (cancelled));
   }
 
