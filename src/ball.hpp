@@ -19,10 +19,10 @@ struct BallConstructorData {
   Vec torque;
 };
 
+
 class Ball {
 
-  //private:
-  public:
+  private:
 
     int id;
 
@@ -40,6 +40,7 @@ class Ball {
     double inertia;
     double diameter;
 
+  public:
 
     Ball(const struct BallConstructorData &bcd);
     Ball(const std::string s);
@@ -54,4 +55,5 @@ class Ball {
     void timejump(double time);
 
     CollisionCheckResult *check_will_collide(Ball *other) const;
+
 };
