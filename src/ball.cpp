@@ -107,3 +107,9 @@ std::string Ball::to_yaml(int indent_size) const
      << indent << "  torque: " << this->torque.to_yaml();
   return ss.str();
 }
+
+void Ball::timejump(double dt)
+{
+  this->position = this->position + (this->velocity*dt);
+  this->orientation = this->orientation + (this->angular_velocity*dt);
+}

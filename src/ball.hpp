@@ -51,6 +51,7 @@ class Ball {
     std::string repr() const;
 
     void collide(Ball *other);
+    void timejump(double time);
 
     CollisionCheckResult *check_will_collide(Ball *other) const;
 };
