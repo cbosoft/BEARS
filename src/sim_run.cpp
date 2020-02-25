@@ -180,7 +180,7 @@ void Sim::run(double end_time)
     std::cerr << this->time << std::endl;
 
     // TODO append step to output
-    //this->append_to_trajectory();
+    this->append_to_trajectory();
 
     done = ((timed && (this->time > end_time)) || (cancelled));
   }

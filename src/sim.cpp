@@ -1,3 +1,4 @@
+#include <fstream>
 #include "sim.hpp"
 
 Sim::~Sim()
@@ -20,6 +21,8 @@ Sim::Sim(std::string configuration_file_path)
 Sim::Sim(std::string configuration_file_path, std::string trajectory_file_path) : Sim(configuration_file_path)
 {
   this->trajectory_file_path = trajectory_file_path;
+  std::ofstream of(trajectory_file_path, std::ios::trunc);
+  of << "---" << std::endl;
 }
 
 
