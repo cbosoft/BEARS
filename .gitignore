@@ -4,3 +4,6 @@ tags
 BEARS
 *gen
 vgcore*
+*~
+*.yaml
+*.pdf
