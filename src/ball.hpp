@@ -42,6 +42,8 @@ class Ball {
     ~Ball();
 
     std::string to_tsv() const;
+    std::string to_yaml() const;
+    std::string to_yaml(int indent) const;
     std::string repr() const;
 
 };
