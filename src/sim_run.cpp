@@ -136,16 +136,16 @@ void Sim::run(double end_time)
   bool done = false, timed = true;
 
   if (end_time < 0.0) {
-    std::cerr << "running until cancelled" << std::endl;
+    std::cerr << "Running until cancelled or events run out." << std::endl;
     timed = false;
   }
   else {
-    std::cerr << "running until sim time exceeds " << end_time << " units" << std::endl;
+    std::cerr << "Running until sim time exceeds " << end_time << " units or events run out." << std::endl;
   }
 
 #ifdef PARALLEL
-  std::cerr << "parallel computation enabled" << std::endl;
-  std::cerr << "using " << N_THREADS << " threads" << std::endl;
+  std::cerr << "Parallel computation enabled." << std::endl;
+  std::cerr << "Using " << N_THREADS << " threads." << std::endl;
 #endif
 
   std::signal(SIGINT, handler);
