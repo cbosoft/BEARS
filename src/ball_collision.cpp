@@ -1,19 +1,13 @@
-#include <iostream>
-
-#include "vec.hpp"
 #include "ball.hpp"
-#include "event.hpp"
-
-
-CollisionCheckResult *collision_check(Ball *a, Ball *b)
+CollisionCheckResult *Ball::check_will_collide(Ball *other) const
 {
   CollisionCheckResult *rv = new CollisionCheckResult;
 
-  Vec dV = a->velocity - b->velocity;
-  Vec dP = a->position - b->position;
+  Vec dV = this->velocity - other->velocity;
+  Vec dP = this->position - other->position;
   double A = dV.dot(dV);
   double B = 2.0*dV.dot(dP);
-  double C = dP.dot(dP) - ((a->diameter+b->diameter)/2.0) ;
+  double C = dP.dot(dP) - ((this->diameter+other->diameter)/2.0) ;
 
   double discriminant = (B*B) - (4*A*C);
   double time = -1.0;
@@ -61,10 +55,10 @@ CollisionCheckResult *collision_check(Ball *a, Ball *b)
     }
   }
 
-  Vec c1 = a->position + a->velocity*time;
-  Vec c2 = b->position + b->velocity*time;
+  Vec c1 = this->position + this->velocity*time;
+  Vec c2 = other->position + other->velocity*time;
 
-  rv->event = new CollisionEvent(time, c1, c2, a, b);
+  rv->event = new CollisionEvent(time, c1, c2, (Ball *)this, other);
   rv->will_occur = true;
 
   return rv;

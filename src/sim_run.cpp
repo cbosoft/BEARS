@@ -6,7 +6,6 @@
 #endif
 
 #include "sim.hpp"
-#include "event.hpp"
 
 static bool event_compare_f(const CollisionEvent *a, const CollisionEvent *b)
 {
@@ -39,7 +38,7 @@ static struct par_event_check_out *parallelCollisionCheckWorker(struct par_event
       if (a == b)
         continue;
 
-      CollisionCheckResult *cer = collision_check(a, b);
+      CollisionCheckResult *cer = a->check_will_collide(b);
       if (cer->will_occur) {
         output->events.push_back(cer->event);
       }
@@ -92,7 +91,7 @@ void Sim::update_events()
     auto a = this->balls[i];
     for (unsigned int j = 0; j < i; j++) {
       auto b = this->balls[j];
-      CollisionCheckResult *cer = collision_check(a, b);
+      CollisionCheckResult *cer = a->check_will_collide(b);
       if (cer->will_occur) {
         this->events.push_back(cer->event);
       }

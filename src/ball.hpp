@@ -2,6 +2,8 @@
 #include <string>
 
 #include "vec.hpp"
+#include "event.hpp"
+
 
 struct BallConstructorData {
   int id;
@@ -46,4 +48,5 @@ class Ball {
     std::string to_yaml(int indent) const;
     std::string repr() const;
 
+    CollisionCheckResult *check_will_collide(Ball *other) const;
 };
