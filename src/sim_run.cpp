@@ -169,12 +169,7 @@ void Sim::run(double end_time)
     // update the interacting particle velocities and stuff
     auto a = event->get_a();
     auto b = event->get_b();
-    double totmass = a->mass + b->mass;
-    Vec new_a_velocity = (a->velocity*((a->mass - b->mass)/totmass)) + (b->velocity*(2.0*b->mass/totmass) );
-    Vec new_b_velocity = (b->velocity*((b->mass - a->mass)/totmass)) + (a->velocity*(2.0*a->mass/totmass) );
-    a->velocity = new_a_velocity;
-    b->velocity = new_b_velocity;
-    // TODO friction, forces, torque, rotation?
+    a->collide(b);
 
     std::cerr << this->time << std::endl;
 

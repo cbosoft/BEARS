@@ -48,5 +48,7 @@ class Ball {
     std::string to_yaml(int indent) const;
     std::string repr() const;
 
+    void collide(Ball *other);
+
     CollisionCheckResult *check_will_collide(Ball *other) const;
 };
