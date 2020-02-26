@@ -2,11 +2,14 @@
 #include <string>
 
 #include "vec.hpp"
+#include "event.hpp"
+
 
 struct BallConstructorData {
   int id;
   double diameter;
   double mass;
+  double inertia;
   double roughness;
   Vec position;
   Vec orientation;
@@ -16,10 +19,10 @@ struct BallConstructorData {
   Vec torque;
 };
 
+
 class Ball {
 
-  //private:
-  public:
+  private:
 
     int id;
 
@@ -34,8 +37,10 @@ class Ball {
 
     double roughness;
     double mass;
+    double inertia;
     double diameter;
 
+  public:
 
     Ball(const struct BallConstructorData &bcd);
     Ball(const std::string s);
@@ -45,5 +50,10 @@ class Ball {
     std::string to_yaml() const;
     std::string to_yaml(int indent) const;
     std::string repr() const;
+
+    void collide(Ball *other);
+    void timejump(double time);
+
+    CollisionCheckResult *check_will_collide(Ball *other) const;
 
 };

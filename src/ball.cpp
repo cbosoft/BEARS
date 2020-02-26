@@ -4,6 +4,7 @@ Ball::Ball(const struct BallConstructorData &bcd)
 {
   this->id = bcd.id;
   this->mass = bcd.mass;
+  this->inertia = bcd.inertia;
   this->diameter = bcd.diameter;
   this->roughness = bcd.roughness;
 
@@ -22,6 +23,7 @@ Ball::Ball(const std::string s)
   std::stringstream ss(s);
   ss >> this->id;
   ss >> this->mass;
+  ss >> this->inertia;
   ss >> this->diameter;
   ss >> this->roughness;
   
@@ -50,6 +52,7 @@ std::string Ball::to_tsv() const
   std::stringstream ss;
   ss << this->id << "\t";
   ss << this->mass << "\t";
+  ss << this->inertia << "\t";
   ss << this->diameter << "\t";
   ss << this->roughness << "\t";
   ss << this->position.to_tsv() << "\t";
@@ -93,6 +96,7 @@ std::string Ball::to_yaml(int indent_size) const
   ss << indent << " - ball:" << std::endl
      << indent << "     id: " << this->id << std::endl
      << indent << "     mass: " << this->mass << std::endl
+     << indent << "     inertia: " << this->inertia << std::endl
      << indent << "     diameter: " << this->diameter << std::endl
      //<< indent << "     roughness: " << this->roughness << std::endl
      << indent << "     position: " << this->position.to_yaml() << std::endl
@@ -103,4 +107,10 @@ std::string Ball::to_yaml(int indent_size) const
      //<< indent << "     torque: " << this->torque.to_yaml()
      ;
   return ss.str();
+}
+
+void Ball::timejump(double dt)
+{
+  this->position = this->position + (this->velocity*dt);
+  this->orientation = this->orientation + (this->angular_velocity*dt);
 }

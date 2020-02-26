@@ -1,7 +1,8 @@
 #pragma once
 
 #include "vec.hpp"
-#include "ball.hpp"
+
+class Ball;
 
 class CollisionEvent {
 
@@ -27,11 +28,6 @@ class CollisionEvent {
       return this->time;
     }
 
-    bool operator<(const CollisionEvent &e) const
-    {
-      return this->time < e.time;
-    }
-
     Ball *get_a() const
     {
       return this->balls[0];
@@ -47,5 +43,3 @@ typedef struct CollisionCheckResult {
   CollisionEvent *event;
   bool will_occur;
 } CollisionCheckResult;
-
-CollisionCheckResult *collision_check(Ball *a, Ball *b);
