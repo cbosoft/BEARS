@@ -93,18 +93,18 @@ std::string Ball::to_yaml(int indent_size) const
   std::string indent = ss.str();
 
   ss.str("");
-  ss << indent << " - ball:" << std::endl
-     << indent << "     id: " << this->id << std::endl
-     << indent << "     mass: " << this->mass << std::endl
-     << indent << "     inertia: " << this->inertia << std::endl
-     << indent << "     diameter: " << this->diameter << std::endl
-     //<< indent << "     roughness: " << this->roughness << std::endl
-     << indent << "     position: " << this->position.to_yaml() << std::endl
-     //<< indent << "     orientation: " << this->orientation.to_yaml() << std::endl
-     << indent << "     velocity: " << this->velocity.to_yaml() << std::endl
-     //<< indent << "     angular_velocity: " << this->angular_velocity.to_yaml() << std::endl
-     //<< indent << "     force: " << this->force.to_yaml() << std::endl
-     //<< indent << "     torque: " << this->torque.to_yaml()
+  ss << indent << " - " << std::endl
+     << indent << "   id: " << this->id << std::endl
+     << indent << "   mass: " << this->mass << std::endl
+     //<< indent << "   inertia: " << this->inertia << std::endl
+     << indent << "   diameter: " << this->diameter << std::endl
+     //<< indent << "   roughness: " << this->roughness << std::endl
+     << indent << "   position: " << this->position.to_yaml() << std::endl
+     //<< indent << "   orientation: " << this->orientation.to_yaml() << std::endl
+     << indent << "   velocity: " << this->velocity.to_yaml() << std::endl
+     //<< indent << "   angular_velocity: " << this->angular_velocity.to_yaml() << std::endl
+     //<< indent << "   force: " << this->force.to_yaml() << std::endl
+     //<< indent << "   torque: " << this->torque.to_yaml()
      ;
   return ss.str();
 }
@@ -112,5 +112,5 @@ std::string Ball::to_yaml(int indent_size) const
 void Ball::timejump(double dt)
 {
   this->position = this->position + (this->velocity*dt);
-  this->orientation = this->orientation + (this->angular_velocity*dt);
+  //this->orientation = this->orientation + (this->angular_velocity*dt);
 }
