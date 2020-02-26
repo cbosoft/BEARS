@@ -7,13 +7,16 @@
 
 #include "sim.hpp"
 
-
-#ifdef PARALLEL
-
 static bool event_compare_f(const CollisionEvent *a, const CollisionEvent *b)
 {
   return a->get_time() < b->get_time();
 }
+
+#ifdef PARALLEL
+
+struct par_event_check_out {
+  std::list<CollisionEvent *> events;
+};
 
 struct par_event_check_in {
   Sim *sim;
@@ -22,11 +25,11 @@ struct par_event_check_in {
 };
 
 
-static CollisionEvent *parallelCollisionCheckWorker(struct par_event_check_in *input)
+static struct par_event_check_out *parallelCollisionCheckWorker(struct par_event_check_in *input)
 {
-
-  CollisionEvent *rv = NULL;
-
+  struct par_event_check_out *output = new struct par_event_check_out;
+  output->events = std::list<CollisionEvent *>();
+  
   for (unsigned int i = input->from; i < input->to; i++) {
     auto a = input->sim->get_ball(i);
     for (unsigned int j = 0; j < i; j++) {
@@ -37,31 +40,22 @@ static CollisionEvent *parallelCollisionCheckWorker(struct par_event_check_in *i
 
       CollisionCheckResult *cer = a->check_will_collide(b);
       if (cer->will_occur) {
-        if ((!rv) || (cer->event->get_time() < rv->get_time())) {
-          delete rv;
-          rv = cer->event;
-        }
-        else {
-          delete cer->event;
-        }
+        output->events.push_back(cer->event);
       }
       delete cer;
     }
   }
 
-  return rv;
+  return output;
 }
 
 #endif
 
-void Sim::find_next_event()
+void Sim::update_events()
 {
-  if (this->event)
-    delete this->event;
-  this->event = NULL;
+  this->clear_events();
 
 #ifdef PARALLEL
-
   unsigned int nchunks = N_THREADS;
 
   if (this->balls.size() % nchunks != 0)
@@ -69,9 +63,8 @@ void Sim::find_next_event()
 
   unsigned int chunklen = this->balls.size() / nchunks;
 
-  std::vector<std::future<CollisionEvent *>> async_threads;
+  std::vector<std::future<struct par_event_check_out *>> async_threads;
   std::vector<struct par_event_check_in *> inputs;
-
   for (unsigned int i = 0; i < nchunks; i++) {
     struct par_event_check_in *input = new struct par_event_check_in;
     input->sim = this;
@@ -83,17 +76,14 @@ void Sim::find_next_event()
     async_threads.push_back(std::async(parallelCollisionCheckWorker, input));
   }
 
-  std::list<CollisionEvent *> events;
   for (unsigned int i = 0; i < nchunks; i++) {
-    CollisionEvent *event = async_threads[i].get();
-    events.push_back(event);
+    struct par_event_check_out *output = async_threads[i].get();
     delete inputs[i];
+    for (auto event : output->events) {
+      this->events.push_back(event);
+    }
+    delete output;
   }
-  events.sort(event_compare_f);
-  for (auto it = ++events.begin(); it != events.end(); it++) {
-    delete (*it);
-  }
-  this->event = events.front();
 
 #else
 
@@ -103,13 +93,7 @@ void Sim::find_next_event()
       auto b = this->balls[j];
       CollisionCheckResult *cer = a->check_will_collide(b);
       if (cer->will_occur) {
-        if ((!this->event) || (this->event->get_time() > cer->event->get_time())) {
-          delete this->event;
-          this->event = cer->event;
-        }
-        else {
-          delete cer->event;
-        }
+        this->events.push_back(cer->event);
       }
       delete cer;
     }
@@ -117,6 +101,16 @@ void Sim::find_next_event()
 
 #endif
 
+  this->events.sort(event_compare_f);
+}
+
+
+void Sim::clear_events()
+{
+  for (auto event : this->events) {
+    delete event;
+  }
+  this->events.erase(this->events.begin(), this->events.end());
 }
 
 
@@ -159,18 +153,17 @@ void Sim::run(double end_time)
   // double ptime = 0.0;
 
   while (!done) {
-    this->find_next_event();
+    this->update_events();
 
-    if (!this->event) {
-      std::cerr << "No event found" << std::endl;
+    if (!this->events.size()) {
+      std::cerr << "no events" << std::endl;
       break;
     }
 
-    double dt = this->event->get_time();
-
+    auto event = this->events.front();
+    double dt = event->get_time();
     for (auto b: this->balls)
       b->timejump(dt);
-
     this->time += dt;
 
     // update the interacting particle velocities and stuff
