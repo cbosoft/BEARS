@@ -46,6 +46,8 @@ int main(int argc, const char **argv)
   std::cerr << "reading config" << std::endl;
   Sim sim(args.config_file_path, args.output_file_path);
 
+  sim.append_to_trajectory();
+
   std::cerr << "begin!" << std::endl;
   sim.run(args.end_time);
 }
