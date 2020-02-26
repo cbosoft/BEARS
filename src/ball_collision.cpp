@@ -3,24 +3,26 @@
 void Ball::collide(Ball *other)
 {
 
-  double av_roughness = (this->roughness + other->roughness) / 2.0;
+  //double av_roughness = (this->roughness + other->roughness) / 2.0;
 
   {
     double totmass = this->mass + other->mass;
-    Vec new_a_velocity = (((this->velocity - other->velocity) * other->mass * av_roughness) + (this->velocity*this->mass) + (other->velocity*other->mass)) * (1.0/totmass);
-    Vec new_b_velocity = (((other->velocity - this->velocity) * this->mass * av_roughness) + (other->velocity*other->mass) + (this->velocity*this->mass)) * (1.0/totmass);
+    // Vec new_a_velocity = (((this->velocity - other->velocity) * other->mass * av_roughness) + (this->velocity*this->mass) + (other->velocity*other->mass)) * (1.0/totmass);
+    // Vec new_b_velocity = (((other->velocity - this->velocity) * this->mass * av_roughness) + (other->velocity*other->mass) + (this->velocity*this->mass)) * (1.0/totmass);
+    Vec new_a_velocity = (this->velocity*((this->mass - other->mass) / (totmass))) + (other->velocity * (other->mass * 2 / totmass));
+    Vec new_b_velocity = (other->velocity*((other->mass - this->mass) / (totmass))) + (this->velocity * (this->mass * 2 / totmass));
     this->velocity = new_a_velocity;
     other->velocity = new_b_velocity;
   }
 
 
-  {
-    double totinertia = this->inertia + other->inertia;
-    Vec new_a_angular_velocity = (((this->angular_velocity - other->angular_velocity) * other->inertia * av_roughness) + (this->angular_velocity*this->inertia) + (other->angular_velocity*other->inertia)) * (1.0/totinertia);
-    Vec new_b_angular_velocity = (((other->angular_velocity - this->angular_velocity) * this->inertia * av_roughness) + (other->angular_velocity*other->inertia) + (this->angular_velocity*this->inertia)) * (1.0/totinertia);
-    this->angular_velocity = new_a_angular_velocity;
-    other->angular_velocity = new_b_angular_velocity;
-  }
+  // {
+  //   double totinertia = this->inertia + other->inertia;
+  //   Vec new_a_angular_velocity = (((this->angular_velocity - other->angular_velocity) * other->inertia * av_roughness) + (this->angular_velocity*this->inertia) + (other->angular_velocity*other->inertia)) * (1.0/totinertia);
+  //   Vec new_b_angular_velocity = (((other->angular_velocity - this->angular_velocity) * this->inertia * av_roughness) + (other->angular_velocity*other->inertia) + (this->angular_velocity*this->inertia)) * (1.0/totinertia);
+  //   this->angular_velocity = new_a_angular_velocity;
+  //   other->angular_velocity = new_b_angular_velocity;
+  // }
 
 }
 
