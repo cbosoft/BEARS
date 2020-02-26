@@ -35,9 +35,9 @@ void Sim::append_to_trajectory() const
   // of << " - " << this->time << std::endl;
 
   of << " - step:" << std::endl
-     << "     time: " << this->time << std::endl
+     << "   time: " << this->time << std::endl
   //    << "     number: " << this->balls.size() << std::endl
-     << "     balls: " << std::endl;
+     << "   balls: " << std::endl;
 
   for (auto ball: this->balls) {
     of << ball->to_yaml(5) << std::endl;
