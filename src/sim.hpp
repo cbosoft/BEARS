@@ -16,10 +16,13 @@ class Sim {
     std::list<CollisionEvent *> events;
     std::vector<Ball *> balls;
     double time;
+    int nthreads;
 
     std::string trajectory_file_path;
     std::string configuration_file_path;
 
+    void parallel_update_events();
+    void linear_update_events();
     void update_events();
     void clear_events();
 
@@ -41,4 +44,5 @@ class Sim {
 
     Ball *get_ball(int index) const;
 
+    void set_parallel(int nthreads);
 };

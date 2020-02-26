@@ -1,9 +1,6 @@
 #include <iostream>
 #include <csignal>
-
-#ifdef PARALLEL
 #include <future>
-#endif
 
 #include "sim.hpp"
 
@@ -12,7 +9,6 @@ static bool event_compare_f(const CollisionEvent *a, const CollisionEvent *b)
   return a->get_time() < b->get_time();
 }
 
-#ifdef PARALLEL
 
 struct par_event_check_out {
   std::list<CollisionEvent *> events;
@@ -49,14 +45,9 @@ static struct par_event_check_out *parallelCollisionCheckWorker(struct par_event
   return output;
 }
 
-#endif
-
-void Sim::update_events()
+void Sim::parallel_update_events()
 {
-  this->clear_events();
-
-#ifdef PARALLEL
-  unsigned int nchunks = N_THREADS;
+  unsigned int nchunks = this->nthreads;
 
   if (this->balls.size() % nchunks != 0)
     nchunks++;
@@ -84,9 +75,10 @@ void Sim::update_events()
     }
     delete output;
   }
+}
 
-#else
-
+void Sim::linear_update_events()
+{
   for (unsigned int i = 0; i < this->balls.size(); i++) {
     auto a = this->balls[i];
     for (unsigned int j = 0; j < i; j++) {
@@ -98,8 +90,19 @@ void Sim::update_events()
       delete cer;
     }
   }
+}
 
-#endif
+
+void Sim::update_events()
+{
+  this->clear_events();
+
+  if (this->nthreads > 1) {
+    this->parallel_update_events();
+  }
+  else {
+    this->linear_update_events();
+  }
 
   this->events.sort(event_compare_f);
 }
