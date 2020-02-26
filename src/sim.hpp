@@ -19,7 +19,7 @@ class Sim {
     int nthreads;
 
     std::string trajectory_file_path;
-    std::string configuration_file_path;
+    std::string config_file_path;
 
     void parallel_update_events();
     void linear_update_events();
@@ -28,9 +28,9 @@ class Sim {
 
   public:
 
-    Sim() =default;
-    Sim(std::string configuration_file_path);
-    Sim(std::string configuration_file_path, std::string trajectory_file_path);
+    Sim();
+    Sim(std::string config_file_path);
+    Sim(std::string config_file_path, std::string trajectory_file_path);
     ~Sim();
 
     void load_from_file(std::string path);
@@ -45,4 +45,7 @@ class Sim {
     Ball *get_ball(int index) const;
 
     void set_parallel(int nthreads);
+    void set_config_file(std::string s);
+    void set_trajectory_file(std::string s);
+
 };
