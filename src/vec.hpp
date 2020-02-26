@@ -4,8 +4,12 @@
 #include <sstream>
 #include <cmath>
 
+#include "exception.hpp"
+
 class Vec {
+
   private:
+
     double i, j, k;
 
   public:
@@ -75,10 +79,26 @@ class Vec {
       return std::pow( (this->i*this->i) + (this->j*this->j) + (this->k*this->k), 0.5);
     }
 
+    Vec component_along(const Vec &other) const
+    {
+      // returns the vector (RES) representing the part of THIS which follows the
+      // direction of OTHER. So RES is parallel to OTHER, RES is perpendicular
+      // to (THIS-RES).
+      double scalar_component = this->dot(other) / other.dot(other);
+      return other*scalar_component;
+    }
+
     Vec operator+(const Vec &v) const { return this->add(v); }
     Vec operator-(const Vec &v) const { return this->subtract(v); }
     Vec operator*(const Vec &v) const { return this->cross(v); }
     Vec operator*(double m) const { return this->scalar_mult(m); }
+    Vec operator/(double m) const { return this->scalar_mult(1./m); }
+    Vec operator%(double mod) const 
+    {
+      (void) mod;
+      throw NotImplementedError("This was executed without being implemented. Figure out float modulo already!");
+      return {this->i, this->j, this->k};
+    }
 };
 
 Vec vec_urand(double min, double max);
