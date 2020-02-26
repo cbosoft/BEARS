@@ -13,6 +13,7 @@ Sim::~Sim()
 Sim::Sim(std::string configuration_file_path)
 {
   this->event = NULL;
+  this->time = 0.0;
   this->configuration_file_path = configuration_file_path;
   this->load_from_file(configuration_file_path);
 }
