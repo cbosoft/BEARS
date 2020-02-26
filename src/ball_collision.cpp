@@ -3,16 +3,38 @@
 void Ball::collide(Ball *other)
 {
 
-  //double av_roughness = (this->roughness + other->roughness) / 2.0;
+  double av_roughness = (this->roughness + other->roughness) * 0.5;
+
+  // the tangent to the centre-centre vector is diminished by friction
+  Vec dC = this->position - other->position;
+  Vec velocity_normal = this->velocity.component_along(dC);
+  Vec velocity_tangent = this->velocity - velocity_normal;
+  Vec velocity_tangent_reduced = velocity_tangent * (1 - av_roughness);
+  this->velocity = (velocity_tangent_reduced + velocity_normal) + (other->angular_velocity*av_roughness*other->diameter*0.5*other->mass/this->mass);
+
+  Vec momentum_lost = velocity_tangent * av_roughness * this->mass;
+  Vec other_angular_velocity_gain = ((momentum_lost * (other->diameter*0.5)) + (this->angular_velocity * av_roughness * this->mass)) / other->mass;
+
+
+  dC = other->position - this->position;
+  velocity_normal = other->velocity.component_along(dC);
+  velocity_tangent = other->velocity - velocity_normal;
+  velocity_tangent_reduced = velocity_tangent * (1 - av_roughness);
+  other->velocity = (velocity_tangent_reduced + velocity_normal) + (this->angular_velocity*av_roughness*this->diameter*0.5*this->mass/other->mass);
+
+  momentum_lost = velocity_tangent * av_roughness * other->mass;
+  Vec this_angular_velocity_gain = (momentum_lost * (this->diameter*0.5)) / this->mass;
+
+  this->angular_velocity = this->angular_velocity * (1 - av_roughness) + this_angular_velocity_gain;
+  other->angular_velocity = other->angular_velocity * (1 - av_roughness) + other_angular_velocity_gain;
+
 
   {
     double totmass = this->mass + other->mass;
-    // Vec new_a_velocity = (((this->velocity - other->velocity) * other->mass * av_roughness) + (this->velocity*this->mass) + (other->velocity*other->mass)) * (1.0/totmass);
-    // Vec new_b_velocity = (((other->velocity - this->velocity) * this->mass * av_roughness) + (other->velocity*other->mass) + (this->velocity*this->mass)) * (1.0/totmass);
-    Vec new_a_velocity = (this->velocity*((this->mass - other->mass) / (totmass))) + (other->velocity * (other->mass * 2 / totmass));
-    Vec new_b_velocity = (other->velocity*((other->mass - this->mass) / (totmass))) + (this->velocity * (this->mass * 2 / totmass));
-    this->velocity = new_a_velocity;
-    other->velocity = new_b_velocity;
+    Vec new_this_velocity = (this->velocity*((this->mass - other->mass) / (totmass))) + (other->velocity * (other->mass * 2 / totmass));
+    Vec new_other_velocity = (other->velocity*((other->mass - this->mass) / (totmass))) + (this->velocity * (this->mass * 2 / totmass));
+    this->velocity = new_this_velocity;
+    other->velocity = new_other_velocity;
   }
 
 
