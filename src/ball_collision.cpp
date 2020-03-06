@@ -2,49 +2,41 @@
 
 void Ball::collide(Ball *other)
 {
+  // method which calculates new velocities, angular velocities after a
+  // collision with another particle
 
-  double av_roughness = (this->roughness + other->roughness) * 0.5;
+  // Using impulsive collision method outlined on wikipedia:
+  // https://en.wikipedia.org/wiki/Collision_response
+  
+  // TODO: add friction
+  // TODO: what if COR != 1.0?
+  // TODO: sort out notation 1,2 v *this,other*? *long names* v short names?
 
-  // the tangent to the centre-centre vector is diminished by friction
-  Vec dC = this->position - other->position;
-  Vec velocity_normal = this->velocity.component_along(dC);
-  Vec velocity_tangent = this->velocity - velocity_normal;
-  Vec velocity_tangent_reduced = velocity_tangent * (1 - av_roughness);
-  this->velocity = (velocity_tangent_reduced + velocity_normal) + (other->angular_velocity*av_roughness*other->diameter*0.5*other->mass/this->mass);
+  const double COR = 1.0;
+  Vec relative_velocity = other->velocity - this->velocity;
+  Vec relative_momentum = (other->velocity * other->mass) - (this->velocity * this->mass);
+  Vec impulse_unit_normal = relative_momentum / relative_momentum.magnitude();
+  Vec collision_point = this->position + ((other->position - this->position) * this->diameter / (this->diameter + other->diameter) );
+  Vec r1 = collision_point - this->position;
+  Vec r2 = collision_point - other->position;
 
-  Vec momentum_lost = velocity_tangent * av_roughness * this->mass;
-  Vec other_angular_velocity_gain = ((momentum_lost * (other->diameter*0.5)) + (this->angular_velocity * av_roughness * this->mass)) / other->mass;
+  double relative_velocity_dot_n = relative_velocity.dot(impulse_unit_normal);
+  double numerator = (-1 - COR) * relative_velocity_dot_n;
+  double denominator_pt_1 = (1./this->mass) + (1./other->mass);
+  Vec r1_cross_normal = r1.cross(impulse_unit_normal);
+  Vec r2_cross_normal = r2.cross(impulse_unit_normal);
+  Vec denominator_pt_vec_1 = (r1_cross_normal * (1.0/this->inertia)).cross(r1);
+  Vec denominator_pt_vec_2 = (r2_cross_normal * (1.0/other->inertia)).cross(r2);
+  double denominator = denominator_pt_1 + impulse_unit_normal.dot(denominator_pt_vec_1 + denominator_pt_vec_2);
+  double impulse_magnitude = numerator / denominator;
 
+  this->velocity = this->velocity - (impulse_unit_normal * impulse_magnitude / this->mass);
+  other->velocity = other->velocity + (impulse_unit_normal * impulse_magnitude / other->mass);
 
-  dC = other->position - this->position;
-  velocity_normal = other->velocity.component_along(dC);
-  velocity_tangent = other->velocity - velocity_normal;
-  velocity_tangent_reduced = velocity_tangent * (1 - av_roughness);
-  other->velocity = (velocity_tangent_reduced + velocity_normal) + (this->angular_velocity*av_roughness*this->diameter*0.5*this->mass/other->mass);
-
-  momentum_lost = velocity_tangent * av_roughness * other->mass;
-  Vec this_angular_velocity_gain = (momentum_lost * (this->diameter*0.5)) / this->mass;
-
-  this->angular_velocity = this->angular_velocity * (1 - av_roughness) + this_angular_velocity_gain;
-  other->angular_velocity = other->angular_velocity * (1 - av_roughness) + other_angular_velocity_gain;
-
-
-  {
-    double totmass = this->mass + other->mass;
-    Vec new_this_velocity = (this->velocity*((this->mass - other->mass) / (totmass))) + (other->velocity * (other->mass * 2 / totmass));
-    Vec new_other_velocity = (other->velocity*((other->mass - this->mass) / (totmass))) + (this->velocity * (this->mass * 2 / totmass));
-    this->velocity = new_this_velocity;
-    other->velocity = new_other_velocity;
-  }
+  this->angular_velocity = this->angular_velocity - (impulse_unit_normal.cross(r1) * impulse_magnitude / this->inertia);
+  other->angular_velocity = other->angular_velocity + (impulse_unit_normal.cross(r2) * impulse_magnitude / other->inertia);
 
 
-  // {
-  //   double totinertia = this->inertia + other->inertia;
-  //   Vec new_a_angular_velocity = (((this->angular_velocity - other->angular_velocity) * other->inertia * av_roughness) + (this->angular_velocity*this->inertia) + (other->angular_velocity*other->inertia)) * (1.0/totinertia);
-  //   Vec new_b_angular_velocity = (((other->angular_velocity - this->angular_velocity) * this->inertia * av_roughness) + (other->angular_velocity*other->inertia) + (this->angular_velocity*this->inertia)) * (1.0/totinertia);
-  //   this->angular_velocity = new_a_angular_velocity;
-  //   other->angular_velocity = new_b_angular_velocity;
-  // }
 
 }
 
