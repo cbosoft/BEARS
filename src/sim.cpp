@@ -68,11 +68,8 @@ void Sim::set_trajectory_file(std::string trajectory_file_path)
 
 void Sim::set_parallel(int nthreads)
 {
-  if (nthreads == 1) {
-    throw ArgumentError("Don't use 'Sim::set_parallel()' with an argument of 1: use 'Sim::set_linear()'.");
-  }
-  else if (nthreads < 1) {
-    throw ArgumentError("Invalid number of parallel threads selected (must be at least 2).");
+  if (nthreads < 1) {
+    throw ArgumentError("Invalid number of parallel threads selected (must be at least 1).");
   }
 
   this->nthreads = nthreads;
