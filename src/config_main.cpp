@@ -62,6 +62,7 @@ int main(int argc, const char **argv)
   bcd.mass = args.mass;
   bcd.diameter = args.diameter;
   bcd.roughness = args.roughness;
+  bcd.inertia = args.mass * args.diameter * args.diameter * 0.1;
 
   Sim sim;
   int pperc = 0;
