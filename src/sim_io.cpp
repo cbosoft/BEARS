@@ -18,6 +18,7 @@ void Sim::load_from_file(std::string path)
     // std::cout << line << std::endl;
     std::stringstream ss(line);
     Ball *b = new Ball(line);
+    b->set_parent(this);
     this->balls.push_back(b);
   }
 }

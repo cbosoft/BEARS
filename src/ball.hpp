@@ -19,7 +19,7 @@ struct BallConstructorData {
   Vec torque;
 };
 
-
+class Sim;
 class Ball {
 
   private:
@@ -40,6 +40,8 @@ class Ball {
     double inertia;
     double diameter;
 
+    const Sim *parent;
+
   public:
 
     Ball(const struct BallConstructorData &bcd);
@@ -53,6 +55,8 @@ class Ball {
 
     void collide(Ball *other);
     void timejump(double time);
+
+    void set_parent(Sim *parent);
 
     CollisionCheckResult *check_will_collide(Ball *other) const;
 
