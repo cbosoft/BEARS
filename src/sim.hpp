@@ -17,6 +17,8 @@ class Sim {
     std::vector<Ball *> balls;
     double time;
     int nthreads;
+    bool periodic_boundaries;
+    double box_length;
 
     std::string trajectory_file_path;
     std::string config_file_path;

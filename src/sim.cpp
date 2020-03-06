@@ -17,6 +17,8 @@ Sim::Sim()
   this->nthreads = 1;
   this->config_file_path = "config.tsv";
   this->trajectory_file_path = "traj.yaml";
+  this->periodic_boundaries = true;
+  this->box_length = 1.0;
 }
 
 

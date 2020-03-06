@@ -9,8 +9,16 @@
 void Sim::load_from_file(std::string path)
 {
   std::ifstream inf(path);
+  std::string line;
 
-  for (std::string line; std::getline(inf, line);) {
+  while (line.rfind("#", 0) == 0) getline(inf, line);
+
+  std::getline(inf, line);
+  std::stringstream ss(line);
+  ss >> this->periodic_boundaries;
+  ss >> this->box_length;
+
+  for (; std::getline(inf, line) ;) {
 
     if (line.rfind("#", 0) == 0) 
       continue;
@@ -49,6 +57,8 @@ void Sim::append_to_trajectory() const
 void Sim::save_to_file(std::string path) const
 {
   std::ofstream of(path, std::ios::trunc);
+
+  of << this->periodic_boundaries << "\t" << this->box_length << std::endl;
 
   for (auto ball : this->balls) {
     of << ball->to_tsv() << std::endl;
