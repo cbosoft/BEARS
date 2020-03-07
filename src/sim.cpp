@@ -18,7 +18,8 @@ Sim::Sim()
   this->config_file_path = "config.tsv";
   this->trajectory_file_path = "traj.yaml";
   this->periodic_boundaries = true;
-  this->box_length = 1.0;
+  this->side_length = 1.0;
+  this->inv_side_length = 1.0/this->side_length;
 }
 
 
@@ -75,4 +76,10 @@ void Sim::set_parallel(int nthreads)
   }
 
   this->nthreads = nthreads;
+}
+
+void Sim::set_side_length(double sl)
+{
+  this->side_length = sl;
+  this->inv_side_length = 1.0/sl;
 }

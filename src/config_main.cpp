@@ -65,6 +65,7 @@ int main(int argc, const char **argv)
   bcd.inertia = args.mass * args.diameter * args.diameter * 0.1;
 
   Sim sim;
+  sim.set_side_length(sep*((double)xn));
   int pperc = 0;
   for (int xi = 0; xi < xn; xi++) {
     for (int yi = 0; yi < yn; yi++) {

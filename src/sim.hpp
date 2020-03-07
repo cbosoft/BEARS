@@ -18,7 +18,8 @@ class Sim {
     double time;
     int nthreads;
     bool periodic_boundaries;
-    double box_length;
+    double side_length;
+    double inv_side_length;
 
     std::string trajectory_file_path;
     std::string config_file_path;
@@ -46,8 +47,11 @@ class Sim {
 
     Ball *get_ball(int index) const;
 
+    void set_side_length(double sl);
     void set_parallel(int nthreads);
     void set_config_file(std::string s);
     void set_trajectory_file(std::string s);
+    Vec enforce_bounds(const Vec &p1, const Vec &p2) const;
+    Vec enforce_bounds(const Vec &p) const;
 
 };

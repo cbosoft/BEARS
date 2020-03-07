@@ -16,7 +16,8 @@ void Sim::load_from_file(std::string path)
   std::getline(inf, line);
   std::stringstream ss(line);
   ss >> this->periodic_boundaries;
-  ss >> this->box_length;
+  ss >> this->side_length;
+  this->inv_side_length = 1.0/this->side_length;
 
   for (; std::getline(inf, line) ;) {
 
@@ -58,7 +59,7 @@ void Sim::save_to_file(std::string path) const
 {
   std::ofstream of(path, std::ios::trunc);
 
-  of << this->periodic_boundaries << "\t" << this->box_length << std::endl;
+  of << this->periodic_boundaries << "\t" << this->side_length << std::endl;
 
   for (auto ball : this->balls) {
     of << ball->to_tsv() << std::endl;

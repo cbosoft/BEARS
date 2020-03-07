@@ -5,6 +5,7 @@ OBJ = \
 			obj/ball_collision.o \
 			obj/sim_io.o \
 			obj/sim_run.o \
+			obj/sim_bounds.o \
 			obj/sim.o \
 			obj/vec.o \
 			obj/random.o
