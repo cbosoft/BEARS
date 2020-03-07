@@ -57,6 +57,7 @@ class Ball {
     void timejump(double time);
 
     void set_parent(Sim *parent);
+    void enforce_bounds();
 
     CollisionCheckResult *check_will_collide(Ball *other) const;
 

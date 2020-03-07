@@ -114,7 +114,7 @@ std::string Ball::to_yaml(int indent_size) const
 void Ball::timejump(double dt)
 {
   this->position = this->position + (this->velocity*dt);
-  this->position = this->parent->enforce_bounds(this->position);
+  this->enforce_bounds();
 
   this->orientation = this->orientation + (this->angular_velocity*dt);
   this->orientation = this->orientation % (2.0*M_PI);
@@ -123,4 +123,9 @@ void Ball::timejump(double dt)
 void Ball::set_parent(Sim *parent)
 {
   this->parent = parent;
+}
+
+void Ball::enforce_bounds()
+{
+  this->position = this->parent->enforce_bounds(this->position);
 }
