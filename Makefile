@@ -25,9 +25,9 @@ BEARS: obj/main.o $(OBJ)
 	@echo -e "\u001b[34mLINKING OBJECTS TO EXECUTABLE $@\u001b[0m"
 	$(CXX) $(CFLAGS) $(DEFS) obj/main.o $(OBJ) -o $@ $(LINK)
 
-configgen: obj/config_main.o $(OBJ)
+configgen: obj/config_main.o obj/config.o $(OBJ)
 	@echo -e "\u001b[34mLINKING OBJECTS TO EXECUTABLE $@\u001b[0m"
-	$(CXX) $(CFLAGS) $(DEFS) obj/config_main.o $(OBJ) -o $@ $(LINK)
+	$(CXX) $(CFLAGS) $(DEFS) obj/config_main.o obj/config.o $(OBJ) -o $@ $(LINK)
 
 clean:
 	rm -rf obj $(EXE) configgen
