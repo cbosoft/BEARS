@@ -57,6 +57,7 @@ class Ball {
     void timejump(double time);
 
     void set_parent(Sim *parent);
+    void set_image(const Vec &image);
     void enforce_bounds();
 
     CollisionCheckResult *check_will_collide(Ball *other) const;

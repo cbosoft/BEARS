@@ -42,14 +42,12 @@ void Ball::collide(Ball *other)
 }
 
 
-CollisionCheckResult *Ball::check_will_collide(Ball *other) const
+CollisionCheckResult *Ball::check_will_collide_image(Ball *other, Vec image) const
 {
   CollisionCheckResult *rv = new CollisionCheckResult;
 
-  assert(this->parent == other->parent, "colliding balls must children of same sim box");
-
   Vec dV = other->velocity - this->velocity;
-  Vec dP = this->parent->enforce_bounds(this->position, other->position);
+  Vec dP = (other->position + image) - this->position;
   double A = dV.dot(dV);
   double B = 2.0*dV.dot(dP);
   double C = dP.dot(dP) - ((this->diameter+other->diameter)/2.0) ;
@@ -100,7 +98,7 @@ CollisionCheckResult *Ball::check_will_collide(Ball *other) const
     }
   }
 
-  rv->event = new CollisionEvent(time, (Ball *)this, other);
+  rv->event = new CollisionEvent(time, (Ball *)this, other, image);
   rv->will_occur = true;
 
   return rv;

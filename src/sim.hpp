@@ -2,11 +2,11 @@
 
 #include <vector>
 #include <list>
+#include <array>
 
 #include "vec.hpp"
 #include "ball.hpp"
 #include "event.hpp"
-
 
 
 class Sim {
@@ -30,6 +30,8 @@ class Sim {
     void clear_events();
 
   public:
+
+    std::array<Vec, 27> images;
 
     Sim();
     Sim(std::string config_file_path);

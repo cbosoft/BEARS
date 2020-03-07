@@ -34,11 +34,14 @@ static struct par_event_check_out *parallelCollisionCheckWorker(struct par_event
       if (a == b)
         continue;
 
-      CollisionCheckResult *cer = a->check_will_collide(b);
-      if (cer->will_occur) {
-        output->events.push_back(cer->event);
+      for (auto image : input->sim->images) {
+        CollisionCheckResult *cer = a->check_will_collide_image(b, image);
+        if (cer->will_occur) {
+          output->events.push_back(cer->event);
+        }
+        delete cer;
       }
-      delete cer;
+
     }
   }
 
@@ -83,11 +86,13 @@ void Sim::linear_update_events()
     auto a = this->balls[i];
     for (unsigned int j = 0; j < i; j++) {
       auto b = this->balls[j];
-      CollisionCheckResult *cer = a->check_will_collide(b);
-      if (cer->will_occur) {
-        this->events.push_back(cer->event);
+      for (auto image : this->images) {
+        CollisionCheckResult *cer = a->check_will_collide_image(b, image);
+        if (cer->will_occur) {
+          this->events.push_back(cer->event);
+        }
+        delete cer;
       }
-      delete cer;
     }
   }
 }
@@ -165,13 +170,19 @@ void Sim::run(double end_time)
 
     auto event = this->events.front();
     double dt = event->get_time();
+
+    Ball *a = event->get_a();
+    Ball *b = event->get_b();
+
+    // particle interacts with specific image
+    b->set_image(event->get_image());
+
+    // update all particle positions to the time of the event
     for (auto b: this->balls)
       b->timejump(dt);
     this->time += dt;
 
     // update the interacting particle velocities and stuff
-    auto a = event->get_a();
-    auto b = event->get_b();
     a->collide(b);
 
     std::cerr << this->time << std::endl;

@@ -18,8 +18,7 @@ Sim::Sim()
   this->config_file_path = "config.tsv";
   this->trajectory_file_path = "traj.yaml";
   this->periodic_boundaries = true;
-  this->side_length = 1.0;
-  this->inv_side_length = 1.0/this->side_length;
+  this->set_side_length(1.0);
 }
 
 
@@ -82,4 +81,12 @@ void Sim::set_side_length(double sl)
 {
   this->side_length = sl;
   this->inv_side_length = 1.0/sl;
+
+  for (int dx = -1, i = 0; dx < 2; dx++) {
+    for (int dy = -1; dy < 2; dy++) {
+      for (int dz = -1; dz < 2; dz++, i++) {
+        this->images[i] = {dx*sl, dy*sl, dz*sl};
+      }
+    }
+  }
 }

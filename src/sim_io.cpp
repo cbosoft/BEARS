@@ -16,8 +16,10 @@ void Sim::load_from_file(std::string path)
   std::getline(inf, line);
   std::stringstream ss(line);
   ss >> this->periodic_boundaries;
-  ss >> this->side_length;
-  this->inv_side_length = 1.0/this->side_length;
+
+  double side_length;
+  ss >> side_length;
+  this->set_side_length(side_length);
 
   for (; std::getline(inf, line) ;) {
 

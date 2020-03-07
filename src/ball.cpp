@@ -125,6 +125,11 @@ void Ball::set_parent(Sim *parent)
   this->parent = parent;
 }
 
+void Ball::set_image(const Vec &image)
+{
+  this->position = this->position + image;
+}
+
 void Ball::enforce_bounds()
 {
   this->position = this->parent->enforce_bounds(this->position);
