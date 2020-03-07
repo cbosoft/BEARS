@@ -8,17 +8,14 @@ class CollisionEvent {
 
   private:
     double time;
-    Vec positions[2];
     Ball *balls[2];
 
   public:
 
     CollisionEvent() =default;
-    CollisionEvent(double t, Vec p1, Vec p2, Ball *a, Ball *b)
+    CollisionEvent(double t, Ball *a, Ball *b)
     {
       this->time = t;
-      this->positions[0] = p1;
-      this->positions[1] = p2;
       this->balls[0] = a;
       this->balls[1] = b;
     }
