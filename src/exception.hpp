@@ -75,3 +75,10 @@ EXCEPTION(TypeError, "TypeError");
 EXCEPTION(NotImplementedError, "NotImplementedError");
 EXCEPTION(AuthorError, "AuthorError");
 EXCEPTION(IOError, "IOError");
+EXCEPTION(AssertError, "AssertError");
+
+inline void assert(bool expression, std::string detail)
+{
+  if (!expression)
+    throw AssertError(detail);
+}
