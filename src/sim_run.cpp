@@ -165,6 +165,11 @@ void Sim::run(double end_time)
 
     if (!this->events.size()) {
       std::cerr << "no events" << std::endl;
+      double dt = 5.0;
+      for (auto b: this->balls)
+        b->timejump(dt);
+      this->time += dt;
+      this->append_to_trajectory();
       break;
     }
 
