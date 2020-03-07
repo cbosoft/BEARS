@@ -48,7 +48,7 @@ CollisionCheckResult *Ball::check_will_collide(Ball *other) const
 
   assert(this->parent == other->parent, "colliding balls must children of same sim box");
 
-  Vec dV = this->velocity - other->velocity;
+  Vec dV = other->velocity - this->velocity;
   Vec dP = this->parent->enforce_bounds(this->position, other->position);
   double A = dV.dot(dV);
   double B = 2.0*dV.dot(dP);
