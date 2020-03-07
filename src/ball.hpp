@@ -60,7 +60,9 @@ class Ball {
     void set_image(const Vec &image);
     void enforce_bounds();
 
-    CollisionCheckResult *check_will_collide(Ball *other) const;
     double get_kinetic_energy() const;
+
+    //CollisionCheckResult *check_will_collide(Ball *other) const;
+    CollisionCheckResult *check_will_collide_image(Ball *other, Vec image) const;
 
 };
