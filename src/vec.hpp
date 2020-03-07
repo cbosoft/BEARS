@@ -3,80 +3,79 @@
 #include <string>
 #include <sstream>
 #include <cmath>
+#include <array>
 
 #include "exception.hpp"
 
 class Vec {
 
-  private:
-
-    double i, j, k;
-
   public:
+    std::array<double, 3> v;
 
     Vec() : Vec(0.0, 0.0, 0.0){}
     Vec(double i, double j, double k)
     {
-      this->i = i;
-      this->j = j;
-      this->k = k;
+      this->v[0] = i;
+      this->v[1] = j;
+      this->v[2] = k;
     }
+
 
     std::string repr() const
     {
       std::stringstream ss;
-      ss << "[" << this->i << ",\t" << this->j << ",\t" << this->k << "]";
+      ss << "[" << this->v[0] << ",\t" << this->v[1] << ",\t" << this->v[2] << "]";
       return ss.str();
     }
 
     std::string to_tsv() const
     {
       std::stringstream ss;
-      ss << this->i << "\t" << this->j << "\t"  << this->k;
+      ss << this->v[0] << "\t" << this->v[1] << "\t"  << this->v[2];
       return ss.str();
     }
 
     std::string to_yaml() const
     {
       std::stringstream ss;
-      ss << "[" << this->i << ", " << this->j << ", " << this->k << "]";
+      ss << "[" << this->v[0] << ", " << this->v[1] << ", " << this->v[2] << "]";
       return ss.str();
     }
 
     Vec add(const Vec &v) const
     {
-      return Vec( this->i + v.i,
-                  this->j + v.j,
-                  this->k + v.k );
+      return Vec( this->v[0] + v.v[0],
+                  this->v[1] + v.v[1],
+                  this->v[2] + v.v[2] );
     }
 
     Vec subtract(const Vec &v) const
     {
-      return Vec( this->i - v.i,
-                  this->j - v.j,
-                  this->k - v.k );
+      return Vec( this->v[0] - v.v[0],
+                  this->v[1] - v.v[1],
+                  this->v[2] - v.v[2] );
     }
 
     Vec cross(const Vec &v) const
     {
-      return Vec( (this->j*v.k) - (this->k*v.j),
-                  (this->k*v.i) - (this->i*v.k),
-                  (this->i*v.j) - (this->j*v.i) );
+      return Vec( (this->v[1]*v.v[2]) - (this->v[2]*v.v[1]),
+                  (this->v[2]*v.v[0]) - (this->v[0]*v.v[2]),
+                  (this->v[0]*v.v[1]) - (this->v[1]*v.v[0]) );
     }
 
     double dot(const Vec &v) const
     {
-      return (this->i*v.i) + (this->j*v.j) + (this->k*v.k);
+      return (this->v[0]*v.v[0]) + (this->v[1]*v.v[1]) + (this->v[2]*v.v[2]);
     }
 
     Vec scalar_mult(double m) const
     {
-      return Vec( this->i*m, this->j*m, this->k*m);
+      return Vec( this->v[0]*m, this->v[1]*m, this->v[2]*m);
     }
 
     double magnitude() const
     {
-      return std::pow( (this->i*this->i) + (this->j*this->j) + (this->k*this->k), 0.5);
+      return std::pow( (this->v[0]*this->v[0]) + (this->v[1]*this->v[1]) + (this->v[2]*this->v[2]), 0.5);
     }
 
     Vec component_along(const Vec &other) const
@@ -93,11 +92,12 @@ class Vec {
     Vec operator*(const Vec &v) const { return this->cross(v); }
     Vec operator*(double m) const { return this->scalar_mult(m); }
     Vec operator/(double m) const { return this->scalar_mult(1./m); }
-    Vec operator%(double mod) const 
+    Vec operator%(double divisor) const 
     {
-      (void) mod;
-      throw NotImplementedError("This was executed without being implemented. Figure out float modulo already!");
-      return {this->i, this->j, this->k};
+      return {
+        std::fmod(this->v[0], divisor), 
+        std::fmod(this->v[1], divisor), 
+        std::fmod(this->v[2], divisor)};
     }
 };
 
