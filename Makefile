@@ -3,9 +3,11 @@ CFLAGS = -g -Wall -Wextra -Werror -std=c++17 -O0
 OBJ = \
 			obj/ball.o \
 			obj/ball_collision.o \
+			obj/ball_properties.o \
 			obj/sim_io.o \
 			obj/sim_run.o \
 			obj/sim_bounds.o \
+			obj/sim_properties.o \
 			obj/sim.o \
 			obj/vec.o \
 			obj/random.o
