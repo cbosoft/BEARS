@@ -105,7 +105,8 @@ std::string Ball::to_yaml(int indent_size) const
      << indent << "   velocity: " << this->velocity.to_yaml() << std::endl
      //<< indent << "   angular_velocity: " << this->angular_velocity.to_yaml() << std::endl
      //<< indent << "   force: " << this->force.to_yaml() << std::endl
-     //<< indent << "   torque: " << this->torque.to_yaml()
+     //<< indent << "   torque: " << this->torque.to_yaml() << std::endl
+     << indent << "   kinetic_energy: " << this->get_kinetic_energy() << std::endl
      ;
   return ss.str();
 }
