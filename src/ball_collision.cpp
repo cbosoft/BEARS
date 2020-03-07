@@ -14,20 +14,19 @@ void Ball::collide(Ball *other)
   // TODO: sort out notation 1,2 v *this,other*? *long names* v short names?
 
   const double COR = 1.0;
-  Vec relative_velocity = other->velocity - this->velocity;
-  Vec relative_momentum = (other->velocity * other->mass) - (this->velocity * this->mass);
-  Vec impulse_unit_normal = relative_momentum / relative_momentum.magnitude();
-  Vec collision_point = this->position + ((other->position - this->position) * this->diameter / (this->diameter + other->diameter) );
+  Vec relative_position = other->position - this->position;
+  Vec impulse_unit_normal = relative_position / relative_position.magnitude();
+  Vec collision_point = this->position + (relative_position * this->diameter / (this->diameter + other->diameter) );
   Vec r1 = collision_point - this->position;
   Vec r2 = collision_point - other->position;
+  Vec relative_contact_velocity = other->velocity + other->angular_velocity.cross(r2) - 
+    this->velocity - this->angular_velocity.cross(r1);
 
-  double relative_velocity_dot_n = relative_velocity.dot(impulse_unit_normal);
-  double numerator = (-1 - COR) * relative_velocity_dot_n;
+  double relative_velocity_dot_n = relative_contact_velocity.dot(impulse_unit_normal);
+  double numerator = (-1. - COR) * relative_velocity_dot_n;
   double denominator_pt_1 = (1./this->mass) + (1./other->mass);
-  Vec r1_cross_normal = r1.cross(impulse_unit_normal);
-  Vec r2_cross_normal = r2.cross(impulse_unit_normal);
-  Vec denominator_pt_vec_1 = (r1_cross_normal * (1.0/this->inertia)).cross(r1);
-  Vec denominator_pt_vec_2 = (r2_cross_normal * (1.0/other->inertia)).cross(r2);
+  Vec denominator_pt_vec_1 = r1.cross(impulse_unit_normal).cross(r1) / this->inertia;
+  Vec denominator_pt_vec_2 = r2.cross(impulse_unit_normal).cross(r2) / other->inertia;
   double denominator = denominator_pt_1 + impulse_unit_normal.dot(denominator_pt_vec_1 + denominator_pt_vec_2);
   double impulse_magnitude = numerator / denominator;
 
