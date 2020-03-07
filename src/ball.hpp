@@ -61,5 +61,6 @@ class Ball {
     void enforce_bounds();
 
     CollisionCheckResult *check_will_collide(Ball *other) const;
+    double get_kinetic_energy() const;
 
 };

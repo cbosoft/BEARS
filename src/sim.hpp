@@ -56,4 +56,6 @@ class Sim {
     Vec enforce_bounds(const Vec &p1, const Vec &p2) const;
     Vec enforce_bounds(const Vec &p) const;
 
+    double get_kinetic_energy() const;
+
 };
