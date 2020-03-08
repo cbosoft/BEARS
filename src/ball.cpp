@@ -48,20 +48,41 @@ Ball::Ball(const std::string s)
   this->torque = {x, y, z};
 }
 
+std::string Ball::tsv_headings()
+{
+  std::stringstream ss;
+  ss 
+    << "id"
+    << "\tmass"
+    << "\tinertia"
+    << "\tdiameter"
+    << "\troughness"
+    << "\tpositionx\tpositiony\tpositionz"
+    << "\torientationx\torientationy\torientationz"
+    << "\tvelocityx\tvelocityy\tvelocityz"
+    << "\tangular_velocityx\tangular_velocityy\tangular_velocityz"
+    << "\tforcex\tforcey\tforcez"
+    << "\tpositionx\tpositiony\tpositionz"
+    ;
+  return ss.str();
+}
+
 std::string Ball::to_tsv() const
 {
   std::stringstream ss;
-  ss << this->id << "\t";
-  ss << this->mass << "\t";
-  ss << this->inertia << "\t";
-  ss << this->diameter << "\t";
-  ss << this->roughness << "\t";
-  ss << this->position.to_tsv() << "\t";
-  ss << this->orientation.to_tsv() << "\t";
-  ss << this->velocity.to_tsv() << "\t";
-  ss << this->angular_velocity.to_tsv() << "\t";
-  ss << this->force.to_tsv() << "\t";
-  ss << this->torque.to_tsv() << "\t";
+  ss 
+    << this->id 
+    << "\t" << this->mass 
+    << "\t" << this->inertia 
+    << "\t" << this->diameter 
+    << "\t" << this->roughness 
+    << "\t" << this->position.to_tsv() 
+    << "\t" << this->orientation.to_tsv() 
+    << "\t" << this->velocity.to_tsv() 
+    << "\t" << this->angular_velocity.to_tsv() 
+    << "\t" << this->force.to_tsv() 
+    << "\t" << this->torque.to_tsv()
+    ;
   return ss.str();
 }
 

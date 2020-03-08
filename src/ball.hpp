@@ -62,6 +62,8 @@ class Ball {
 
     double get_kinetic_energy() const;
 
+    static std::string tsv_headings();
+
     //CollisionCheckResult *check_will_collide(Ball *other) const;
     CollisionCheckResult *check_will_collide_image(Ball *other, Vec image) const;
 
