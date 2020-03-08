@@ -15,7 +15,7 @@ int main(int argc, const char **argv)
     int nthreads;
   } args = {
     "config.tsv", 
-    "traj.yaml",
+    "traj.tsv",
     1.0,
     1
   };
