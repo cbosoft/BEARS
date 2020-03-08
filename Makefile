@@ -8,6 +8,7 @@ OBJ = \
 			obj/sim_run.o \
 			obj/sim_bounds.o \
 			obj/sim_properties.o \
+			obj/sim_traj.o \
 			obj/sim.o \
 			obj/vec.o \
 			obj/random.o
