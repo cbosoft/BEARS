@@ -22,12 +22,19 @@ class Sim {
     double inv_side_length;
 
     std::string trajectory_file_path;
+    std::string trajectory_file_extension;
     std::string config_file_path;
 
     void parallel_update_events();
     void linear_update_events();
     void update_events();
     void clear_events();
+
+    void init_trajectory_tsv() const;
+    void append_to_trajectory_tsv() const;
+
+    void init_trajectory_yaml() const;
+    void append_to_trajectory_yaml() const;
 
   public:
 
@@ -39,6 +46,8 @@ class Sim {
     ~Sim();
 
     void load_from_file(std::string path);
+
+    void init_trajectory();
     void append_to_trajectory() const;
     void save_to_file(std::string path) const;
     void show_config() const;

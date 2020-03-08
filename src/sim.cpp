@@ -59,13 +59,7 @@ void Sim::set_config_file(std::string config_file_path)
 void Sim::set_trajectory_file(std::string trajectory_file_path) 
 {
   this->trajectory_file_path = trajectory_file_path;
-  std::ofstream of(trajectory_file_path, std::ios::trunc);
-
-  if (!of.is_open()) {
-    throw IOError(Formatter() << "Error opening trajectory ('" << trajectory_file_path << "')", true);
-  }
-
-  of << "---" << std::endl;
+  this->init_trajectory();
 }
 
 void Sim::set_parallel(int nthreads)
