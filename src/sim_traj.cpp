@@ -63,7 +63,7 @@ void Sim::append_to_trajectory_tsv() const
 
   of << "t= " << this->time << std::endl;
   for (auto ball: this->balls)
-    of << ball->to_tsv() << ball->get_kinetic_energy() << std::endl;
+    of << ball->to_tsv() << "\t" << ball->get_kinetic_energy() << std::endl;
 
 }
 
