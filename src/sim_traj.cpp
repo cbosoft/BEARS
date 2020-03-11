@@ -49,7 +49,7 @@ void Sim::init_trajectory_tsv() const
   of << "BEARS " << VERSION << " LOG" << std::endl
     << "n: " << this->balls.size() << " L: " << this->side_length << std::endl
     ;
-  of << Ball::tsv_headings() << "\tkinetic_energy" << std::endl;
+  of << Ball::tsv_headings() << "\tkinetic_energy\ta_id\tb_id" << std::endl;
 }
 
 void Sim::append_to_trajectory_tsv() const
@@ -61,9 +61,17 @@ void Sim::append_to_trajectory_tsv() const
     throw IOError(Formatter() << "Error opening trajectory ('" << trajectory_file_path << "')", true);
   }
 
+  int aid = -1, bid = -1;
+
+  if (this->events.size()) {
+    auto event = this->events.front();
+    aid = event->get_a()->get_id();
+    bid = event->get_b()->get_id();
+  }
+
   of << "t= " << this->time << std::endl;
   for (auto ball: this->balls)
-    of << ball->to_tsv() << "\t" << ball->get_kinetic_energy() << std::endl;
+    of << ball->to_tsv() << "\t" << ball->get_kinetic_energy() << "\t" << aid << "\t" << bid << std::endl;
 
 }
 
