@@ -6,37 +6,6 @@
 #include "exception.hpp"
 
 
-void Sim::init_trajectory_yaml() const
-{
-  std::ofstream of(trajectory_file_path, std::ios::trunc);
-
-  if (!of.is_open()) {
-    throw IOError(Formatter() << "Error opening trajectory ('" << trajectory_file_path << "')", true);
-  }
-
-  of << "---" << std::endl;
-}
-
-
-void Sim::append_to_trajectory_yaml() const
-{
-  std::ofstream of(this->trajectory_file_path, std::ios::app);
-
-  if (!of.is_open()) {
-    throw IOError(Formatter() << "Error opening trajectory ('" << trajectory_file_path << "')", true);
-  }
-
-  of << " - step:" << std::endl
-     << "   time: " << this->time << std::endl
-     //<< "   number: " << this->balls.size() << std::endl
-     << "   balls: " << std::endl;
-
-  for (auto ball: this->balls) {
-    of << ball->to_yaml(5) << std::endl;
-  }
-
-}
-
 void Sim::init_trajectory_tsv() const
 {
 
@@ -51,6 +20,36 @@ void Sim::init_trajectory_tsv() const
     ;
   of << Ball::tsv_headings() << "\tkinetic_energy" << std::endl;
 }
+
+
+void Sim::init_trajectory_bin() const
+{
+
+  std::ofstream of(trajectory_file_path, std::ios::trunc);
+
+  if (of.fail()) {
+    throw IOError(Formatter() << "Error opening trajectory ('" << trajectory_file_path << "')", true);
+  }
+  
+  // TODO: header bytes: software version, number of balls, etc
+}
+
+
+void Sim::init_trajectory()
+{
+
+  if (this->trajectory_file_extension.compare("tsv") == 0) {
+    init_trajectory_tsv();
+  }
+  else if (this->trajectory_file_extension.compare("bin") == 0) {
+    init_trajectory_bin();
+  }
+  else {
+    throw ArgumentError(Formatter() << "Unknown trajectory extension \"" << this->trajectory_file_extension << "\". Valid extensions are .tsv and .bin.");
+  }
+
+}
+
 
 void Sim::append_to_trajectory_tsv() const
 {
@@ -67,35 +66,38 @@ void Sim::append_to_trajectory_tsv() const
 
 }
 
-void Sim::init_trajectory()
-{
-  size_t last_dot_index = this->trajectory_file_path.rfind(".");
-  size_t extension_length = this->trajectory_file_path.size() - last_dot_index - 1;
-  this->trajectory_file_extension = this->trajectory_file_path.substr(last_dot_index + 1, extension_length);
 
-  if (this->trajectory_file_extension.compare("yaml") == 0) {
-    init_trajectory_yaml();
+void Sim::append_to_trajectory_bin() const
+{
+
+  std::ofstream of(this->trajectory_file_path, std::ios::app);
+
+  if (!of.is_open()) {
+    throw IOError(Formatter() << "Error opening trajectory ('" << trajectory_file_path << "')", true);
   }
-  else if (this->trajectory_file_extension.compare("tsv") == 0) {
-    init_trajectory_tsv();
-  }
-  else {
-    throw ArgumentError(Formatter() << "Unknown trajectory extension \"" << this->trajectory_file_extension << "\". Valid extensions are .yaml and .tsv.");
+
+  // TODO: timestep information
+  for (auto ball: this->balls) {
+    auto bytes = ball->to_bin();
+    for (auto byte : bytes) {
+      of << byte << std::endl; // TODO kinetic energy?
+    }
   }
 
 }
 
+
 void Sim::append_to_trajectory() const
 {
-  if (this->trajectory_file_extension.compare("yaml") == 0) {
-    append_to_trajectory_yaml();
-  }
-  else if (this->trajectory_file_extension.compare("tsv") == 0) {
+  if (this->trajectory_file_extension.compare("tsv") == 0) {
     append_to_trajectory_tsv();
+  }
+  else if (this->trajectory_file_extension.compare("bin") == 0) {
+    append_to_trajectory_bin();
   }
   else {
     // should only happen if I forget to update this if-else branch after
     // adding/changing trajectory formats.
-    throw ArgumentError(Formatter() << "Unknown trajectory extension \"" << this->trajectory_file_extension << "\". Valid extensions are .yaml and .tsv.");
+    throw ArgumentError(Formatter() << "Unknown trajectory extension \"" << this->trajectory_file_extension << "\". Valid extensions are .tsv and .bin.");
   }
 }
