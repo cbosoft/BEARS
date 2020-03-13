@@ -3,7 +3,10 @@
 #include <string>
 #include <cstring>
 
+#include "progress.hpp"
 #include "sim.hpp"
+#include "exception.hpp"
+#include "formatter.hpp"
 
 
 void Sim::load_from_file(std::string path)
@@ -35,23 +38,44 @@ void Sim::load_from_file(std::string path)
 }
 
 
-
-void Sim::save_to_file(std::string path) const
+void Sim::save_config_tsv() const
 {
-  std::ofstream of(path, std::ios::trunc);
-
+  std::ofstream of(this->config_file_path, std::ios::trunc);
   of << this->periodic_boundaries << "\t" << this->side_length << std::endl;
-
+  ProgressBar pb(this->balls.size(), "saving", 1.0);
   for (auto ball : this->balls) {
     of << ball->to_tsv() << std::endl;
+    pb.update();
   }
-
 }
 
 
-void Sim::show_config() const
+void Sim::save_config_bin() const
 {
+  std::ofstream of(this->config_file_path, std::ios::trunc | std::ios::binary);
+  // TODO: header bytes informing about software version, number of balls, box bounds and such
+  ProgressBar pb(this->balls.size(), "saving", 1.0);
   for (auto ball : this->balls) {
-    std::cerr << ball->repr() << std::endl;
+    auto bytes = ball->to_bin();
+    for (auto byte : bytes) {
+      of << byte;
+    }
   }
+}
+
+
+void Sim::save_config() const
+{
+
+
+  if (this->config_file_extension.compare("tsv") == 0) {
+    this->save_config_tsv();
+  }
+  else if (this->config_file_extension.compare("bin") == 0) {
+    this->save_config_bin();
+  }
+  else {
+    throw ArgumentError(Formatter() << "Unknown config file extension \"" << this->config_file_extension << "\". Valid extensions are .tsv and .bin.");
+  }
+
 }

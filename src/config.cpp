@@ -2,6 +2,7 @@
 #include "config.hpp"
 #include "exception.hpp"
 #include "formatter.hpp"
+#include "progress.hpp"
 
 struct BallConstructorData prep_bcd(const struct ConfigArgs &args)
 {
@@ -24,7 +25,8 @@ void simple_cubic_monodisperse_random_velocity(Sim &sim, const struct ConfigArgs
   sim.set_side_length(sep*((double)(xn+1)));
   
   struct BallConstructorData bcd = prep_bcd(args);
-  int pperc = 0;
+
+  ProgressBar pb(xn*yn*zn, "generating sc config", 1.0);
   for (int xi = 0; xi < xn; xi++) {
     for (int yi = 0; yi < yn; yi++) {
       for (int zi = 0; zi < zn; zi++) {
@@ -34,16 +36,11 @@ void simple_cubic_monodisperse_random_velocity(Sim &sim, const struct ConfigArgs
         bcd.angular_velocity = vec_nrand(0, 1.0) * args.angular_velocity_mag;
         sim.add_ball(bcd);
 
-        int perc = bcd.id*100/n;
-        if (perc > pperc) {
-          std::cerr << '#';
-          pperc = perc;
-        }
+        pb.update(1);
 
       }
     }
   }
-  std::cerr << std::endl;
 }
 
 void interacting_pair(Sim &sim, const struct ConfigArgs &args)

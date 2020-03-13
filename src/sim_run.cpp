@@ -1,6 +1,8 @@
 #include <iostream>
 #include <csignal>
+#include <chrono>
 #include <future>
+#include <set>
 
 #include "sim.hpp"
 
@@ -15,9 +17,8 @@ struct par_event_check_out {
 };
 
 struct par_event_check_in {
-  Sim *sim;
-  unsigned int to;
-  unsigned int from;
+  Sim* sim;
+  std::vector<unsigned int> invalid_indices;
 };
 
 
@@ -26,7 +27,7 @@ static struct par_event_check_out *parallelCollisionCheckWorker(struct par_event
   struct par_event_check_out *output = new struct par_event_check_out;
   output->events = std::list<CollisionEvent *>();
   
-  for (unsigned int i = input->from; i < input->to; i++) {
+  for (auto i : input->invalid_indices) {
     auto a = input->sim->get_ball(i);
     for (unsigned int j = 0; j < i; j++) {
       auto b = input->sim->get_ball(j);
@@ -48,24 +49,27 @@ static struct par_event_check_out *parallelCollisionCheckWorker(struct par_event
   return output;
 }
 
-void Sim::parallel_update_events()
+void Sim::parallel_update_events(std::set<unsigned int> invalid_indices)
 {
   unsigned int nchunks = this->nthreads;
 
-  if (this->balls.size() % nchunks != 0)
+  if (invalid_indices.size() % nchunks != 0)
     nchunks++;
 
-  unsigned int chunklen = this->balls.size() / nchunks;
+  unsigned int chunklen = invalid_indices.size() / nchunks;
 
   std::vector<std::future<struct par_event_check_out *>> async_threads;
   std::vector<struct par_event_check_in *> inputs;
+  auto beg_it = invalid_indices.begin();
+  auto end_it = invalid_indices.begin();
+  std::advance(end_it, chunklen);
   for (unsigned int i = 0; i < nchunks; i++) {
     struct par_event_check_in *input = new struct par_event_check_in;
+    std::vector<unsigned int> invalid_indices_chunk(beg_it, end_it);
+    std::advance(beg_it, chunklen);
+    std::advance(end_it, chunklen);
+    input->invalid_indices = invalid_indices_chunk;
     input->sim = this;
-    input->from = i*chunklen;
-    input->to = (i+1)*chunklen;
-    if ((i+1) > (this->balls.size()-1))
-      input->to = this->balls.size()-1;
     inputs.push_back(input);
     async_threads.push_back(std::async(parallelCollisionCheckWorker, input));
   }
@@ -80,9 +84,9 @@ void Sim::parallel_update_events()
   }
 }
 
-void Sim::linear_update_events()
+void Sim::linear_update_events(std::set<unsigned int> invalid_indices)
 {
-  for (unsigned int i = 0; i < this->balls.size(); i++) {
+  for (auto i : invalid_indices) {
     auto a = this->balls[i];
     for (unsigned int j = 0; j < i; j++) {
       auto b = this->balls[j];
@@ -100,25 +104,45 @@ void Sim::linear_update_events()
 
 void Sim::update_events()
 {
-  this->clear_events();
+  std::set<unsigned int> invalid_indices;
 
-  if (this->nthreads > 1) {
-    this->parallel_update_events();
+  // only reprocess events for affected particles
+  if (auto ran_event = this->events.front()) {
+
+    Ball *a = ran_event->get_a();
+    Ball *b = ran_event->get_b();
+
+    for (auto it = this->events.begin(); it != this->events.end(); it++) {
+
+      const auto &event = (*it);
+      Ball *ev_a = event->get_a();
+      Ball *ev_b = event->get_b();
+
+      if ((ev_a == a) || (ev_a == b) || (ev_b == a) || (ev_b == b)) {
+        invalid_indices.insert(ev_a->get_id()-1);
+        invalid_indices.insert(ev_b->get_id()-1);
+        this->events.erase(it++);
+      }
+
+    }
+
   }
   else {
-    this->linear_update_events();
+
+    for (auto ball : this->balls) {
+      invalid_indices.insert(ball->get_id()-1);
+    }
+
+  }
+
+  if (this->nthreads > 1) {
+    this->parallel_update_events(invalid_indices);
+  }
+  else {
+    this->linear_update_events(invalid_indices);
   }
 
   this->events.sort(event_compare_f);
-}
-
-
-void Sim::clear_events()
-{
-  for (auto event : this->events) {
-    delete event;
-  }
-  this->events.erase(this->events.begin(), this->events.end());
 }
 
 
@@ -160,8 +184,15 @@ void Sim::run(double end_time)
   this->time = 0.0;
   // double ptime = 0.0;
 
+#define CLOCK std::chrono::steady_clock
   while (!done) {
+    auto before = CLOCK::now();
     this->update_events();
+    auto after = CLOCK::now();
+    double duration = static_cast<double>((after - before).count()) * CLOCK::duration::period::num / CLOCK::duration::period::den;
+    before = after;
+#undef CLOCK
+
 
     if (!this->events.size()) {
       std::cerr << "no events" << std::endl;
@@ -190,7 +221,7 @@ void Sim::run(double end_time)
     // update the interacting particle velocities and stuff
     a->collide(b);
 
-    std::cerr << this->time << std::endl;
+    std::cerr << "t= " << this->time << " d= " << duration << "spe" << std::endl;
 
     this->append_to_trajectory(a->get_id(), b->get_id());
 

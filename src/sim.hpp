@@ -3,6 +3,7 @@
 #include <vector>
 #include <list>
 #include <array>
+#include <set>
 
 #include "vec.hpp"
 #include "ball.hpp"
@@ -14,7 +15,7 @@ class Sim {
   private:
 
     std::list<CollisionEvent *> events;
-    std::vector<Ball *> balls;
+    std::vector<Ball *> balls; // TODO: array
     double time;
     int nthreads;
     bool periodic_boundaries;
@@ -24,17 +25,18 @@ class Sim {
     std::string trajectory_file_path;
     std::string trajectory_file_extension;
     std::string config_file_path;
+    std::string config_file_extension;
 
-    void parallel_update_events();
-    void linear_update_events();
+    void parallel_update_events(std::set<unsigned int> invalid_indices);
+    void linear_update_events(std::set<unsigned int> invalid_indices);
     void update_events();
-    void clear_events();
 
     void init_trajectory_tsv() const;
     void append_to_trajectory_tsv(int, int) const;
-
-    void init_trajectory_yaml() const;
-    void append_to_trajectory_yaml(int, int) const;
+    void save_config_tsv() const;
+    void init_trajectory_bin() const;
+    void append_to_trajectory_bin(int, int) const;
+    void save_config_bin() const;
 
   public:
 
@@ -50,8 +52,7 @@ class Sim {
     void init_trajectory();
     void append_to_trajectory() const;
     void append_to_trajectory(int aid, int bid) const;
-    void save_to_file(std::string path) const;
-    void show_config() const;
+    void save_config() const;
 
     void add_ball(const struct BallConstructorData &bcd);
 

@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <vector>
 
 #include "vec.hpp"
 #include "event.hpp"
@@ -51,6 +52,7 @@ class Ball {
     std::string to_tsv() const;
     std::string to_yaml() const;
     std::string to_yaml(int indent) const;
+    std::vector<unsigned short> to_bin() const;
     std::string repr() const;
 
     void collide(Ball *other);
@@ -65,7 +67,6 @@ class Ball {
 
     static std::string tsv_headings();
 
-    //CollisionCheckResult *check_will_collide(Ball *other) const;
     CollisionCheckResult *check_will_collide_image(Ball *other, Vec image) const;
 
 };

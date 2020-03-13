@@ -16,7 +16,7 @@ Sim::Sim()
   this->time = 0.0;
   this->nthreads = 1;
   this->config_file_path = "config.tsv";
-  this->trajectory_file_path = "traj.yaml";
+  this->trajectory_file_path = "traj.tsv";
   this->periodic_boundaries = true;
   this->set_side_length(1.0);
 }
@@ -53,12 +53,18 @@ Ball *Sim::get_ball(int i) const
 void Sim::set_config_file(std::string config_file_path)
 {
   this->config_file_path = config_file_path;
+  size_t last_dot_index = this->config_file_path.rfind(".");
+  size_t extension_length = this->config_file_path.size() - last_dot_index - 1;
+  this->config_file_extension = this->config_file_path.substr(last_dot_index + 1, extension_length);
 }
 
 
 void Sim::set_trajectory_file(std::string trajectory_file_path) 
 {
   this->trajectory_file_path = trajectory_file_path;
+  size_t last_dot_index = this->trajectory_file_path.rfind(".");
+  size_t extension_length = this->trajectory_file_path.size() - last_dot_index - 1;
+  this->trajectory_file_extension = this->trajectory_file_path.substr(last_dot_index + 1, extension_length);
   this->init_trajectory();
 }
 
