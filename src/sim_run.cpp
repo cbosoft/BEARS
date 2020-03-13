@@ -1,5 +1,6 @@
 #include <iostream>
 #include <csignal>
+#include <chrono>
 #include <future>
 
 #include "sim.hpp"
@@ -160,8 +161,15 @@ void Sim::run(double end_time)
   this->time = 0.0;
   // double ptime = 0.0;
 
+#define CLOCK std::chrono::steady_clock
   while (!done) {
+    auto before = CLOCK::now();
     this->update_events();
+    auto after = CLOCK::now();
+    double duration = static_cast<double>((after - before).count()) * CLOCK::duration::period::num / CLOCK::duration::period::den;
+    before = after;
+#undef CLOCK
+
 
     if (!this->events.size()) {
       std::cerr << "no events" << std::endl;
@@ -190,7 +198,7 @@ void Sim::run(double end_time)
     // update the interacting particle velocities and stuff
     a->collide(b);
 
-    std::cerr << this->time << std::endl;
+    std::cerr << "t= " << this->time << " d= " << duration << "spe" << std::endl;
 
     this->append_to_trajectory();
 
