@@ -3,6 +3,7 @@
 #include <vector>
 #include <list>
 #include <array>
+#include <set>
 
 #include "vec.hpp"
 #include "ball.hpp"
@@ -25,10 +26,9 @@ class Sim {
     std::string trajectory_file_extension;
     std::string config_file_path;
 
-    void parallel_update_events();
-    void linear_update_events();
+    void parallel_update_events(std::set<unsigned int> invalid_indices);
+    void linear_update_events(std::set<unsigned int> invalid_indices);
     void update_events();
-    void clear_events();
 
     void init_trajectory_tsv() const;
     void append_to_trajectory_tsv() const;
