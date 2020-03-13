@@ -31,10 +31,10 @@ class Sim {
     void clear_events();
 
     void init_trajectory_tsv() const;
-    void append_to_trajectory_tsv() const;
+    void append_to_trajectory_tsv(int, int) const;
 
     void init_trajectory_yaml() const;
-    void append_to_trajectory_yaml() const;
+    void append_to_trajectory_yaml(int, int) const;
 
   public:
 
@@ -49,6 +49,7 @@ class Sim {
 
     void init_trajectory();
     void append_to_trajectory() const;
+    void append_to_trajectory(int aid, int bid) const;
     void save_to_file(std::string path) const;
     void show_config() const;
 

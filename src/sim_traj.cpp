@@ -18,13 +18,17 @@ void Sim::init_trajectory_yaml() const
 }
 
 
-void Sim::append_to_trajectory_yaml() const
+void Sim::append_to_trajectory_yaml(int aid, int bid) const
 {
   std::ofstream of(this->trajectory_file_path, std::ios::app);
 
   if (!of.is_open()) {
     throw IOError(Formatter() << "Error opening trajectory ('" << trajectory_file_path << "')", true);
   }
+
+  // TODO log event ids
+  (void) aid;
+  (void) bid;
 
   of << " - step:" << std::endl
      << "   time: " << this->time << std::endl
@@ -47,12 +51,12 @@ void Sim::init_trajectory_tsv() const
   }
 
   of << "BEARS " << VERSION << " LOG" << std::endl
-    << "n: " << this->balls.size() << " L: " << this->side_length << std::endl
+    << "n:\t" << this->balls.size() << "\tL:\t" << this->side_length << std::endl
     ;
-  of << Ball::tsv_headings() << "\tkinetic_energy\ta_id\tb_id" << std::endl;
+  of << Ball::tsv_headings() << "\tkinetic_energy" << std::endl;
 }
 
-void Sim::append_to_trajectory_tsv() const
+void Sim::append_to_trajectory_tsv(int aid, int bid) const
 {
 
   std::ofstream of(this->trajectory_file_path, std::ios::app);
@@ -61,19 +65,12 @@ void Sim::append_to_trajectory_tsv() const
     throw IOError(Formatter() << "Error opening trajectory ('" << trajectory_file_path << "')", true);
   }
 
-  int aid = -1, bid = -1;
-
-  if (this->events.size()) {
-    auto event = this->events.front();
-    aid = event->get_a()->get_id();
-    bid = event->get_b()->get_id();
-  }
-
-  of << "t= " << this->time << std::endl;
+  of << "t=\t" << this->time << "\t" << aid << "\tand\t" << bid << std::endl;
   for (auto ball: this->balls)
-    of << ball->to_tsv() << "\t" << ball->get_kinetic_energy() << "\t" << aid << "\t" << bid << std::endl;
+    of << ball->to_tsv() << "\t" << ball->get_kinetic_energy() << std::endl;
 
 }
+
 
 void Sim::init_trajectory()
 {
@@ -93,13 +90,20 @@ void Sim::init_trajectory()
 
 }
 
+
 void Sim::append_to_trajectory() const
 {
+  this->append_to_trajectory(-1, -1);
+}
+
+
+void Sim::append_to_trajectory(int aid, int bid) const
+{
   if (this->trajectory_file_extension.compare("yaml") == 0) {
-    append_to_trajectory_yaml();
+    append_to_trajectory_yaml(aid, bid);
   }
   else if (this->trajectory_file_extension.compare("tsv") == 0) {
-    append_to_trajectory_tsv();
+    append_to_trajectory_tsv(aid, bid);
   }
   else {
     // should only happen if I forget to update this if-else branch after

@@ -192,7 +192,7 @@ void Sim::run(double end_time)
 
     std::cerr << this->time << std::endl;
 
-    this->append_to_trajectory();
+    this->append_to_trajectory(a->get_id(), b->get_id());
 
     // check if exit condition is satisfied
     done = ((timed && (this->time > end_time)) || (cancelled));
