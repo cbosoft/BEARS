@@ -22,12 +22,12 @@ Ball::Ball(const struct BallConstructorData &bcd)
 Ball::Ball(const std::string s)
 {
   std::stringstream ss(s);
-  ss >> this->id;
-  ss >> this->mass;
-  ss >> this->inertia;
-  ss >> this->diameter;
-  ss >> this->roughness;
-  
+  ss >> this->id
+    >> this->mass
+    >> this->inertia
+    >> this->diameter
+    >> this->roughness;
+
   double x, y, z;
   ss >> x; ss >> y; ss >> z;
   this->position = {x, y, z};
