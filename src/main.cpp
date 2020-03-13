@@ -2,6 +2,7 @@
 #include <cstring>
 
 #include "sim.hpp"
+#include "version.hpp"
 
 #define EITHER(A,B) ((strcmp(argv[i], A) == 0) || (strcmp(argv[i], B) == 0))
 
@@ -48,6 +49,7 @@ int main(int argc, const char **argv)
     }
   }
 
+  print_header();
   std::cerr << "Setting up..." << std::endl;
   Sim sim(args.config_file_path, args.output_file_path);
 

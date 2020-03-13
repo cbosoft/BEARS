@@ -10,6 +10,7 @@ OBJ = \
 			obj/sim_properties.o \
 			obj/sim_traj.o \
 			obj/sim.o \
+			obj/version.o \
 			obj/vec.o \
 			obj/random.o
 
