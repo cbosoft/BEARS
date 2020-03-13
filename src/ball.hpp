@@ -61,6 +61,8 @@ class Ball {
     void enforce_bounds();
 
     double get_kinetic_energy() const;
+    int get_id() const;
+
 
     static std::string tsv_headings();
 

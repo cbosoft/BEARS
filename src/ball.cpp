@@ -155,3 +155,8 @@ void Ball::enforce_bounds()
 {
   this->position = this->parent->enforce_bounds(this->position);
 }
+
+int Ball::get_id() const
+{
+  return this->id;
+}
