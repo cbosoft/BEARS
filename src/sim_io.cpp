@@ -3,6 +3,7 @@
 #include <string>
 #include <cstring>
 
+#include "progress.hpp"
 #include "sim.hpp"
 
 
@@ -42,8 +43,10 @@ void Sim::save_to_file(std::string path) const
 
   of << this->periodic_boundaries << "\t" << this->side_length << std::endl;
 
+  ProgressBar pb(this->balls.size(), "saving", 1.0);
   for (auto ball : this->balls) {
     of << ball->to_tsv() << std::endl;
+    pb.update();
   }
 
 }
