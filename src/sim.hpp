@@ -15,7 +15,7 @@ class Sim {
   private:
 
     std::list<CollisionEvent *> events;
-    std::vector<Ball *> balls;
+    std::vector<Ball *> balls; // TODO: array
     double time;
     int nthreads;
     bool periodic_boundaries;
