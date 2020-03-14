@@ -36,6 +36,8 @@ void Sim::load_from_file(std::string path)
     b->set_parent(this);
     this->balls.push_back(b);
   }
+
+  std::cerr << "Loaded configuration of " << this->balls.size() << " particles." << std::endl;
 }
 
 
