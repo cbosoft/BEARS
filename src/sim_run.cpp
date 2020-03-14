@@ -184,13 +184,17 @@ void Sim::run(double end_time)
   this->time = 0.0;
   // double ptime = 0.0;
 
-#define CLOCK std::chrono::steady_clock
+  double event_duration = -1.0, output_duration = -1.0;
+
   while (!done) {
-    auto before = CLOCK::now();
-    this->update_events();
-    auto after = CLOCK::now();
-    double duration = static_cast<double>((after - before).count()) * CLOCK::duration::period::num / CLOCK::duration::period::den;
-    before = after;
+#define CLOCK std::chrono::steady_clock
+    {
+      auto before = CLOCK::now();
+      this->update_events();
+      auto after = CLOCK::now();
+      event_duration = static_cast<double>((after - before).count()) * CLOCK::duration::period::num / CLOCK::duration::period::den;
+      before = after;
+    }
 #undef CLOCK
 
 
@@ -221,9 +225,17 @@ void Sim::run(double end_time)
     // update the interacting particle velocities and stuff
     a->collide(b);
 
-    std::cerr << "t= " << this->time << " d= " << duration << "spe" << std::endl;
+#define CLOCK std::chrono::steady_clock
+    {
+      auto before = CLOCK::now();
+      this->append_to_trajectory(a->get_id(), b->get_id());
+      auto after = CLOCK::now();
+      output_duration = static_cast<double>((after - before).count()) * CLOCK::duration::period::num / CLOCK::duration::period::den;
+      before = after;
+    }
+#undef CLOCK
 
-    this->append_to_trajectory(a->get_id(), b->get_id());
+    std::cerr << "t= " << this->time << " ed= " << event_duration << " spe  od= " << output_duration << std::endl;
 
     // check if exit condition is satisfied
     done = ((timed && (this->time > end_time)) || (cancelled));
