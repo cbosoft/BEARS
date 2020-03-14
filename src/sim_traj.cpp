@@ -16,7 +16,7 @@ void Sim::init_trajectory_tsv() const
     throw IOError(Formatter() << "Error opening trajectory ('" << trajectory_file_path << "')", true);
   }
 
-  of << "BEARS " << VERSION << " LOG" << std::endl
+  of << "BEARS v" << VERSION << " LOG" << std::endl
     << "n: " << this->balls.size() << " L: " << this->side_length << std::endl
     ;
   of << Ball::tsv_headings() << "\tkinetic_energy" << std::endl;
@@ -34,7 +34,7 @@ void Sim::init_trajectory_bin() const
   
   // header bytes: software version, number of balls, ball information size, followed by 8 zeros.
   static_assert(sizeof(double) == 8);
-  of << double(VERSION_NUMERIC) << uint32_t(this->balls.size()) << uint8_t(Ball::bin_nbytes()) << uint8_t(0);
+  of << double(VERSION) << uint32_t(this->balls.size()) << uint8_t(Ball::bin_nbytes()) << uint8_t(0);
 }
 
 
