@@ -9,10 +9,11 @@
 
 int main(int argc, const char **argv)
 {
+  print_header("configurator");
   struct ConfigArgs args = parse_args(argc, argv);
   Sim sim;
-  print_header("configurator");
+  sim.set_config_file(args.path);
   init_config(sim, args);
-  sim.save_to_file(args.path);
+  sim.save_config();
   std::cout << "done!" << std::endl;
 }
