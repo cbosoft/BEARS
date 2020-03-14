@@ -66,6 +66,6 @@ class Ball {
     static std::string tsv_headings();
     static uint32_t bin_nbytes();
 
-    CollisionCheckResult *check_will_collide_image(Ball *other, Vec image) const;
+    CollisionEvent *check_will_collide_image(Ball *other, Vec image) const;
 
 };

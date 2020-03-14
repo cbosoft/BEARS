@@ -36,11 +36,9 @@ static struct par_event_check_out *parallelCollisionCheckWorker(struct par_event
         continue;
 
       for (auto image : input->sim->images) {
-        CollisionCheckResult *cer = a->check_will_collide_image(b, image);
-        if (cer->will_occur) {
-          output->events.push_back(cer->event);
+        if (auto *event_ptr = a->check_will_collide_image(b, image)) {
+          output->events.push_back(event_ptr);
         }
-        delete cer;
       }
 
     }
@@ -91,11 +89,9 @@ void Sim::linear_update_events(std::set<unsigned int> invalid_indices)
     for (unsigned int j = 0; j < i; j++) {
       auto b = this->balls[j];
       for (auto image : this->images) {
-        CollisionCheckResult *cer = a->check_will_collide_image(b, image);
-        if (cer->will_occur) {
-          this->events.push_back(cer->event);
+        if (auto *event_ptr = a->check_will_collide_image(b, image)) {
+          this->events.push_back(event_ptr);
         }
-        delete cer;
       }
     }
   }

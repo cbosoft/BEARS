@@ -41,10 +41,8 @@ void Ball::collide(Ball *other)
 }
 
 
-CollisionCheckResult *Ball::check_will_collide_image(Ball *other, Vec image) const
+CollisionEvent *Ball::check_will_collide_image(Ball *other, Vec image) const
 {
-  CollisionCheckResult *rv = new CollisionCheckResult;
-
   Vec dV = other->velocity - this->velocity;
   Vec dP = (other->position + image) - this->position;
   double A = dV.dot(dV);
@@ -55,13 +53,11 @@ CollisionCheckResult *Ball::check_will_collide_image(Ball *other, Vec image) con
   double time = -1.0;
   if (discriminant < 0.0) {
     // std::cerr << "no collision" << std::endl;
-    rv->will_occur = false;
-    return rv;
+    return NULL;
   }
   else if (discriminant == 0.0) {
     // std::cerr << "zero discriminant" << std::endl;
-    rv->will_occur = false;
-    return rv;
+    return NULL;
   }
   else {
     double discriminant_root = std::pow(discriminant, 0.5);
@@ -70,15 +66,13 @@ CollisionCheckResult *Ball::check_will_collide_image(Ball *other, Vec image) con
     double lilsol = (-B - discriminant_root) / (2.0 * A);
     if ((bigsol < 1e-7) || (lilsol < 1e-7)) {
       // std::cerr << "both results zero" << std::endl;
-      rv->will_occur = false;
-      return rv;
+      return NULL;
     }
 
     if (lilsol < 0.0) {
       if (bigsol < 0.0) {
         // std::cerr << "both results negative" << std::endl;
-        time = 0.0;
-        rv->will_occur = false;
+        return NULL;
       }
       else {
         time = bigsol;
@@ -97,8 +91,5 @@ CollisionCheckResult *Ball::check_will_collide_image(Ball *other, Vec image) con
     }
   }
 
-  rv->event = new CollisionEvent(time, (Ball *)this, other, image);
-  rv->will_occur = true;
-
-  return rv;
+  return new CollisionEvent(time, (Ball *)this, other, image);
 }

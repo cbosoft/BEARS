@@ -42,8 +42,3 @@ class CollisionEvent {
       return this->image;
     }
 };
-
-typedef struct CollisionCheckResult {
-  CollisionEvent *event;
-  bool will_occur;
-} CollisionCheckResult;
