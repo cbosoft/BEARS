@@ -101,36 +101,6 @@ std::string Ball::repr() const
 }
 
 
-std::string Ball::to_yaml() const
-{
-  return this->to_yaml(0);
-}
-
-std::string Ball::to_yaml(int indent_size) const
-{
-  std::stringstream ss;
-  for (int i = 0; i < indent_size; i++){
-    ss << " ";
-  }
-  std::string indent = ss.str();
-
-  ss.str("");
-  ss << indent << " - " << std::endl
-     << indent << "   id: " << this->id << std::endl
-     << indent << "   mass: " << this->mass << std::endl
-     //<< indent << "   inertia: " << this->inertia << std::endl
-     << indent << "   diameter: " << this->diameter << std::endl
-     //<< indent << "   roughness: " << this->roughness << std::endl
-     << indent << "   position: " << this->position.to_yaml() << std::endl
-     //<< indent << "   orientation: " << this->orientation.to_yaml() << std::endl
-     << indent << "   velocity: " << this->velocity.to_yaml() << std::endl
-     //<< indent << "   angular_velocity: " << this->angular_velocity.to_yaml() << std::endl
-     //<< indent << "   force: " << this->force.to_yaml() << std::endl
-     //<< indent << "   torque: " << this->torque.to_yaml() << std::endl
-     << indent << "   kinetic_energy: " << this->get_kinetic_energy() << std::endl
-     ;
-  return ss.str();
-}
 
 void Ball::timejump(double dt)
 {

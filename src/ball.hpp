@@ -50,8 +50,6 @@ class Ball {
     ~Ball();
 
     std::string to_tsv() const;
-    std::string to_yaml() const;
-    std::string to_yaml(int indent) const;
     std::vector<unsigned short> to_bin() const;
     std::string repr() const;
 
