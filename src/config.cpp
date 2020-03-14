@@ -17,19 +17,20 @@ struct BallConstructorData prep_bcd(const struct ConfigArgs &args)
 
 void simple_cubic_monodisperse_random_velocity(Sim &sim, const struct ConfigArgs &args)
 {
-  int n = args.n;
-  int xn = ceil(cbrt(n));
-  int yn = ceil(cbrt(n));
-  int zn = ceil(cbrt(n));
+  uint32_t n = args.n;
+  uint32_t xn = ceil(cbrt(n));
+  uint32_t yn = ceil(cbrt(n));
+  uint32_t zn = ceil(cbrt(n));
+  std::cerr << n << " " << xn << " " << yn  << " " << zn << std::endl;
   double sep = args.separation;
   sim.set_side_length(sep*((double)(xn+1)));
   
   struct BallConstructorData bcd = prep_bcd(args);
 
   ProgressBar pb(xn*yn*zn, "generating sc config", 1.0);
-  for (int xi = 0; xi < xn; xi++) {
-    for (int yi = 0; yi < yn; yi++) {
-      for (int zi = 0; zi < zn; zi++) {
+  for (uint32_t xi = 0; xi < xn; xi++) {
+    for (uint32_t yi = 0; yi < yn; yi++) {
+      for (uint32_t zi = 0; zi < zn; zi++) {
         bcd.id++;
         bcd.position = {sep*xi, sep*yi, sep*zi};
         bcd.velocity = vec_nrand(0, 1.0) * args.velocity_mag;

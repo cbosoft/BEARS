@@ -4,6 +4,7 @@
 #include "sim.hpp"
 #include "formatter.hpp"
 #include "exception.hpp"
+#include "bfstream.hpp"
 
 
 void Sim::init_trajectory_tsv() const
@@ -25,13 +26,15 @@ void Sim::init_trajectory_tsv() const
 void Sim::init_trajectory_bin() const
 {
 
-  std::ofstream of(trajectory_file_path, std::ios::trunc);
+  OutputByteStreamer of(trajectory_file_path, std::ios::trunc);
 
   if (of.fail()) {
     throw IOError(Formatter() << "Error opening trajectory ('" << trajectory_file_path << "')", true);
   }
   
-  // TODO: header bytes: software version, number of balls, etc
+  // header bytes: software version, number of balls, ball information size, followed by 8 zeros.
+  static_assert(sizeof(double) == 8);
+  of << double(VERSION_NUMERIC) << uint32_t(this->balls.size()) << uint8_t(Ball::bin_nbytes()) << uint8_t(0);
 }
 
 
@@ -51,7 +54,7 @@ void Sim::init_trajectory()
 }
 
 
-void Sim::append_to_trajectory_tsv(int aid, int bid) const
+void Sim::append_to_trajectory_tsv(uint32_t aid, uint32_t bid) const
 {
 
   std::ofstream of(this->trajectory_file_path, std::ios::app);
@@ -67,20 +70,20 @@ void Sim::append_to_trajectory_tsv(int aid, int bid) const
 }
 
 
-void Sim::append_to_trajectory_bin(int aid, int bid) const
+void Sim::append_to_trajectory_bin(uint32_t aid, uint32_t bid) const
 {
 
-  std::ofstream of(this->trajectory_file_path, std::ios::app);
+  OutputByteStreamer of(this->trajectory_file_path, std::ios::app);
 
   if (!of.is_open()) {
     throw IOError(Formatter() << "Error opening trajectory ('" << trajectory_file_path << "')", true);
   }
 
-  // TODO: timestep information
+  of << double(this->time) << aid << bid;
   for (auto ball: this->balls) {
-    auto bytes = ball->to_bin();
-    for (auto byte : bytes) {
-      of << byte << std::endl; // TODO kinetic energy?
+    uint32_t *data = ball->to_bin();
+    for (unsigned int i = 0; i < Ball::bin_nbytes(); i++) {
+      of << data[i];
     }
   }
 

@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "ball.hpp"
 #include "sim.hpp"
 
@@ -130,3 +132,53 @@ int Ball::get_id() const
 {
   return this->id;
 }
+
+uint32_t Ball::bin_nbytes()
+{
+  uint32_t 
+    dbl_size = sizeof(double),
+    id_size = sizeof(Ball::id),
+    nbytes = dbl_size * ( (3 * 4) + 5 ) + id_size; // 4 3vecs: pos, orien, vel, angvel, plus uint32: id, plus 5 dbls: roughness, mass, inertia, diameter, kinetic energy
+  return nbytes;
+}
+
+
+#define APPEND_DBL_UINTARR(D)\
+  {\
+    *vi = D;\
+    vi_uints = reinterpret_cast<uint32_t *>(vi);\
+    for (unsigned int j = 0; j < sizeof(vi_uints); j++) \
+      rv[offset+j] = vi_uints[j]; \
+    offset += sizeof(double); \
+  }
+#define APPEND_VEC_UINTARR(V)\
+  {\
+    for (auto v : V.as_array()) { \
+      APPEND_DBL_UINTARR(v); \
+    }\
+  }
+
+uint32_t *Ball::to_bin() const
+{
+  uint32_t *rv = new uint32_t[Ball::bin_nbytes()];
+
+  int offset = 0;
+  double *vi = new double(0.0);
+  uint32_t *vi_uints = NULL;
+  APPEND_DBL_UINTARR(this->roughness);
+  APPEND_DBL_UINTARR(this->mass);
+  APPEND_DBL_UINTARR(this->inertia);
+  APPEND_DBL_UINTARR(this->diameter);
+
+  APPEND_VEC_UINTARR(this->position);
+  APPEND_VEC_UINTARR(this->orientation);
+  APPEND_VEC_UINTARR(this->velocity);
+  APPEND_VEC_UINTARR(this->angular_velocity);
+
+  APPEND_DBL_UINTARR(this->get_kinetic_energy());
+
+  delete vi;
+  return rv;
+}
+
+#undef OUTPUT

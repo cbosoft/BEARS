@@ -3,6 +3,7 @@
 #include <string>
 #include <cstring>
 
+#include "bfstream.hpp"
 #include "progress.hpp"
 #include "sim.hpp"
 #include "exception.hpp"
@@ -52,13 +53,13 @@ void Sim::save_config_tsv() const
 
 void Sim::save_config_bin() const
 {
-  std::ofstream of(this->config_file_path, std::ios::trunc | std::ios::binary);
+  OutputByteStreamer of(this->config_file_path, std::ios::trunc | std::ios::binary);
   // TODO: header bytes informing about software version, number of balls, box bounds and such
   ProgressBar pb(this->balls.size(), "saving", 1.0);
   for (auto ball : this->balls) {
-    auto bytes = ball->to_bin();
-    for (auto byte : bytes) {
-      of << byte;
+    uint32_t *data = ball->to_bin();
+    for (unsigned int i = 0; i < Ball::bin_nbytes(); i++) {
+      of << data[i];
     }
   }
 }
@@ -66,7 +67,6 @@ void Sim::save_config_bin() const
 
 void Sim::save_config() const
 {
-
 
   if (this->config_file_extension.compare("tsv") == 0) {
     this->save_config_tsv();

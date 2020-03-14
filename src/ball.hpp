@@ -7,7 +7,7 @@
 
 
 struct BallConstructorData {
-  int id;
+  uint32_t id;
   double diameter;
   double mass;
   double inertia;
@@ -25,7 +25,7 @@ class Ball {
 
   private:
 
-    int id;
+    uint32_t id;
 
     Vec position;
     Vec orientation;
@@ -50,7 +50,7 @@ class Ball {
     ~Ball();
 
     std::string to_tsv() const;
-    std::vector<unsigned short> to_bin() const;
+    uint32_t *to_bin() const;
     std::string repr() const;
 
     void collide(Ball *other);
@@ -64,6 +64,7 @@ class Ball {
     int get_id() const;
 
     static std::string tsv_headings();
+    static uint32_t bin_nbytes();
 
     CollisionCheckResult *check_will_collide_image(Ball *other, Vec image) const;
 

@@ -32,10 +32,10 @@ class Sim {
     void update_events();
 
     void init_trajectory_tsv() const;
-    void append_to_trajectory_tsv(int, int) const;
+    void append_to_trajectory_tsv(uint32_t, uint32_t) const;
     void save_config_tsv() const;
     void init_trajectory_bin() const;
-    void append_to_trajectory_bin(int, int) const;
+    void append_to_trajectory_bin(uint32_t, uint32_t) const;
     void save_config_bin() const;
 
   public:

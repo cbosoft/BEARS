@@ -5,7 +5,7 @@
 #include "sim.hpp"
 
 struct ConfigArgs {
-  int n; 
+  uint32_t n; 
   double mass;
   double diameter;
   double separation;

@@ -87,6 +87,11 @@ class Vec {
       return other*scalar_component;
     }
 
+    const std::array<double, 3> &as_array() const
+    {
+      return this->v;
+    }
+
     Vec operator+(const Vec &v) const { return this->add(v); }
     Vec operator-(const Vec &v) const { return this->subtract(v); }
     Vec operator*(const Vec &v) const { return this->cross(v); }
