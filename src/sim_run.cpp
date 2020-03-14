@@ -5,6 +5,7 @@
 #include <set>
 
 #include "sim.hpp"
+#include "colour.hpp"
 
 static bool event_compare_f(const CollisionEvent *a, const CollisionEvent *b)
 {
@@ -151,8 +152,10 @@ static void handler(int signal)
 
   static int i = 0;
   
-  if (i++ > 10)
+  if (i++ > 10) {
+    std::cerr << FG_RED << BOLD << "Cancelled." << RESET << std::endl;
     exit(1);
+  }
 
   cancelled = true;
 }
