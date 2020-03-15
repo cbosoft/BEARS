@@ -1,5 +1,7 @@
 #pragma once
 
+#include <list>
+
 #include "vec.hpp"
 
 class Ball;
@@ -42,6 +44,34 @@ class CollisionEvent {
       return this->image;
     }
 };
+
+class EventCollection {
+
+  private:
+
+    std::list<CollisionEvent *> events;
+
+  public:
+
+    EventCollection() { }
+
+    void add_event(CollisionEvent *event)
+    {
+      if (this->events.size() and (event->get_time() < events.front()->get_time())) {
+        this->events.push_front(event);
+      }
+      else {
+        this->events.push_back(event);
+      }
+    }
+
+    const std::list<CollisionEvent *> &get_list() const
+    {
+      return this->events;
+    }
+};
+
+
 inline bool event_compare_f(const CollisionEvent *a, const CollisionEvent *b)
 {
   return a->get_time() < b->get_time();
