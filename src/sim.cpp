@@ -90,3 +90,8 @@ void Sim::set_side_length(double sl)
     }
   }
 }
+
+double Sim::get_side_length() const
+{
+  return this->side_length;
+}

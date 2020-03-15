@@ -87,6 +87,24 @@ class Vec {
       return other*scalar_component;
     }
 
+    Vec floordiv(double v) const
+    {
+      Vec rv;
+      for (int i = 0; i < 3; i++) {
+        rv.v[i] = std::floor(this->v[i] / v);
+      }
+      return rv;
+    }
+
+    Vec nearbyint() const
+    {
+      Vec rv;
+      for (int i = 0; i < 3; i++) {
+        rv.v[i] = std::nearbyint(this->v[i]);
+      }
+      return rv;
+    }
+
     const std::array<double, 3> &as_array() const
     {
       return this->v;
@@ -103,6 +121,18 @@ class Vec {
         std::fmod(this->v[0], divisor), 
         std::fmod(this->v[1], divisor), 
         std::fmod(this->v[2], divisor)};
+    }
+    void operator-=(const Vec&v)
+    {
+      for (int i = 0; i < 3; i++) {
+        this->v[i] -= v.v[i];
+      }
+    }
+    void operator-=(double d)
+    {
+      for (int i = 0; i < 3; i++) {
+        this->v[i] -= d;
+      }
     }
 };
 

@@ -67,5 +67,6 @@ class Ball {
     static uint32_t bin_nbytes();
 
     CollisionEvent *check_will_collide_image(Ball *other, Vec image) const;
+    CollisionEvent *check_will_collide_minimum_image(Ball *other, double L) const;
 
 };

@@ -36,10 +36,8 @@ static struct par_event_check_out *parallelCollisionCheckWorker(struct par_event
       if (a == b)
         continue;
 
-      for (auto image : input->sim->images) {
-        if (auto *event_ptr = a->check_will_collide_image(b, image)) {
-          output->events.push_back(event_ptr);
-        }
+      if (auto *event_ptr = a->check_will_collide_minimum_image(b, input->sim->get_side_length() )) {
+        output->events.push_back(event_ptr);
       }
 
     }
@@ -76,8 +74,14 @@ void Sim::parallel_update_events(std::set<unsigned int> invalid_indices)
   for (unsigned int i = 0; i < nchunks; i++) {
     struct par_event_check_out *output = async_threads[i].get();
     delete inputs[i];
-    for (auto event : output->events) {
-      this->events.push_back(event);
+    for (auto event_ptr : output->events) {
+      int aid = event_ptr->get_a()->get_id();
+      int bid = event_ptr->get_b()->get_id();
+      auto idpair = std::make_pair(aid>bid?aid:bid, aid>bid?bid:aid);
+      if (this->events_pairs.find(idpair) == this->events_pairs.end()) {
+        this->events.push_back(event_ptr);
+        this->events_pairs.insert(idpair);
+      }
     }
     delete output;
   }
@@ -89,9 +93,13 @@ void Sim::linear_update_events(std::set<unsigned int> invalid_indices)
     auto a = this->balls[i];
     for (unsigned int j = 0; j < i; j++) {
       auto b = this->balls[j];
-      for (auto image : this->images) {
-        if (auto *event_ptr = a->check_will_collide_image(b, image)) {
+      if (auto *event_ptr = a->check_will_collide_minimum_image(b, this->side_length)) {
+        int aid = event_ptr->get_a()->get_id();
+        int bid = event_ptr->get_b()->get_id();
+        auto idpair = std::make_pair(aid>bid?aid:bid, aid>bid?bid:aid);
+        if (this->events_pairs.find(idpair) == this->events_pairs.end()) {
           this->events.push_back(event_ptr);
+          this->events_pairs.insert(idpair);
         }
       }
     }

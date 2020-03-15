@@ -40,56 +40,74 @@ void Ball::collide(Ball *other)
 
 }
 
-
-CollisionEvent *Ball::check_will_collide_image(Ball *other, Vec image) const
+static double check_will_collide_pv(Vec dP, Vec dV, double avdia)
 {
-  Vec dV = other->velocity - this->velocity;
-  Vec dP = (other->position + image) - this->position;
   double A = dV.dot(dV);
   double B = 2.0*dV.dot(dP);
-  double C = dP.dot(dP) - ((this->diameter+other->diameter)/2.0) ;
+  double C = dP.dot(dP) - avdia;
 
-  double discriminant = (B*B) - (4*A*C);
+  double discriminant = (B*B) - (4.0*A*C);
   double time = -1.0;
-  if (discriminant < 0.0) {
-    // std::cerr << "no collision" << std::endl;
-    return NULL;
-  }
-  else if (discriminant == 0.0) {
-    // std::cerr << "zero discriminant" << std::endl;
-    return NULL;
-  }
-  else {
+  if (discriminant > 0.0) {
     double discriminant_root = std::pow(discriminant, 0.5);
 
     double bigsol = (-B + discriminant_root) / (2.0 * A);
     double lilsol = (-B - discriminant_root) / (2.0 * A);
-    if ((bigsol < 1e-7) || (lilsol < 1e-7)) {
-      // std::cerr << "both results zero" << std::endl;
-      return NULL;
-    }
+    if ((bigsol > 1e-7) or (lilsol > 1e-7)) {
+      // if results are not both approximately zero...
 
-    if (lilsol < 0.0) {
-      if (bigsol < 0.0) {
-        // std::cerr << "both results negative" << std::endl;
-        return NULL;
-      }
-      else {
-        time = bigsol;
-      }
-    }
-    else {
-      if (bigsol < 0.0) {
-        time = lilsol;
-      }
-      else {
-        time = lilsol;
-        if (bigsol < lilsol) {
+      if (lilsol < 0.0) {
+        if (bigsol > 0.0) {
           time = bigsol;
+        }
+      }
+      else {
+        if (bigsol < 0.0) {
+          time = lilsol;
+        }
+        else {
+          time = lilsol;
+          if (bigsol < lilsol) {
+            time = bigsol;
+          }
         }
       }
     }
   }
 
-  return new CollisionEvent(time, (Ball *)this, other, image);
+  return time;
+}
+
+
+CollisionEvent *Ball::check_will_collide_minimum_image(Ball *other, double L) const
+{
+  Vec dV = other->velocity - this->velocity;
+  //Vec p1 = this->position - (this->position.floordiv(L)*L);
+  //Vec p2 = other->position - (other->position.floordiv(L)*L);
+  Vec dP = other->position - this->position;//p2 - p1;
+  dP -= (dP / L).nearbyint() * L;
+
+  double time = check_will_collide_pv(dP, dV, (this->diameter + other->diameter) / 2.0);
+  if (time > 0.0) {
+    return new CollisionEvent(time, (Ball *)this, other, {0, 0, 0});
+  }
+  else {
+    return NULL;
+  }
+
+}
+
+CollisionEvent *Ball::check_will_collide_image(Ball *other, Vec image) const
+{
+  Vec dV = other->velocity - this->velocity;
+  Vec dP = (other->position + image) - this->position;
+
+  double time = check_will_collide_pv(dP, dV, (this->diameter + other->diameter) / 2.0);
+  if (time > 0.0) {
+    return new CollisionEvent(time, (Ball *)this, other, image);
+  }
+  else {
+    return NULL;
+  }
+
 }
