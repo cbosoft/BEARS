@@ -6,11 +6,7 @@
 
 #include "sim.hpp"
 #include "colour.hpp"
-
-static bool event_compare_f(const CollisionEvent *a, const CollisionEvent *b)
-{
-  return a->get_time() < b->get_time();
-}
+#include "event.hpp"
 
 
 struct par_event_check_out {

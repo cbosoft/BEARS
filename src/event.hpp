@@ -42,3 +42,8 @@ class CollisionEvent {
       return this->image;
     }
 };
+inline bool event_compare_f(const CollisionEvent *a, const CollisionEvent *b)
+{
+  return a->get_time() < b->get_time();
+}
+
