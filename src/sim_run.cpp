@@ -102,7 +102,7 @@ void Sim::linear_update_events(std::set<unsigned int> invalid_indices)
   }
 }
 
-
+static int removed = 0;
 void Sim::update_events()
 {
   std::set<unsigned int> invalid_indices;
@@ -112,7 +112,8 @@ void Sim::update_events()
 
     Ball *a = ran_event->get_a();
     Ball *b = ran_event->get_b();
-
+    
+    removed = 0;
     for (auto it = this->events.begin(); it != this->events.end(); it++) {
 
       const auto &event = (*it);
@@ -126,6 +127,7 @@ void Sim::update_events()
         invalid_indices.insert(ev_b->get_id()-1);
         this->events.erase(it++);
         this->events_pairs.erase(idpair);
+        removed++;
       }
 
     }
@@ -205,7 +207,7 @@ void Sim::run(double end_time)
 
 
     if (!this->events.size()) {
-      std::cerr << "no events" << std::endl;
+      std::cerr << "No more events." << std::endl;
       double dt = 5.0;
       for (auto b: this->balls)
         b->timejump(dt);
@@ -241,10 +243,16 @@ void Sim::run(double end_time)
     }
 #undef CLOCK
 
-    std::cerr << "t= " << this->time << " ed= " << event_duration << " spe  od= " << output_duration << std::endl;
+    // display some statistics
+    std::cerr << "t= " << this->time 
+      << " ed= " << event_duration 
+      << " od= " << output_duration 
+      << " ne= " << this->events.size()
+      << " re= " << removed 
+      << std::endl;
 
     // check if exit condition is satisfied
-    done = ((timed && (this->time > end_time)) || (cancelled));
+    done = ((timed and (this->time > end_time)) or (cancelled));
   }
 
   std::signal(SIGINT, SIG_DFL);
