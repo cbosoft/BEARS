@@ -15,6 +15,7 @@ class Sim {
   private:
 
     std::list<CollisionEvent *> events;
+    std::set<std::pair<int, int>> events_pairs; // high id, low id
     std::vector<Ball *> balls; // TODO: array
     double time;
     int nthreads;
@@ -66,6 +67,7 @@ class Sim {
     void set_trajectory_file(std::string s);
     Vec enforce_bounds(const Vec &p1, const Vec &p2) const;
     Vec enforce_bounds(const Vec &p) const;
+
 
     double get_kinetic_energy() const;
     double get_side_length() const;

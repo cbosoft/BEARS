@@ -122,11 +122,14 @@ void Sim::update_events()
       const auto &event = (*it);
       Ball *ev_a = event->get_a();
       Ball *ev_b = event->get_b();
+      int aid = ev_a->get_id(), bid = ev_b->get_id();
+      auto idpair = std::make_pair(aid>bid?aid:bid, aid>bid?bid:aid);
 
       if ((ev_a == a) || (ev_a == b) || (ev_b == a) || (ev_b == b)) {
         invalid_indices.insert(ev_a->get_id()-1);
         invalid_indices.insert(ev_b->get_id()-1);
         this->events.erase(it++);
+        this->events_pairs.erase(idpair);
       }
 
     }
