@@ -16,7 +16,5 @@ The goal of this package is to perform simple ballistic or fluid mediated simula
   - [ ] Acceptable speed (< 1min/unit) up to 10^5 particles
   - [ ] Acceptable speed (< 5min/unit) up to 10^6 particles
   - [ ] Acceptable speed (< 10min/unit) up to 10^7 particles
-  
-## WIP: Watch this space.
 
 <sub>Icon by [Smashicons](https://www.flaticon.com/authors/smashicons).</sub>
