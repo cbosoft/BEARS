@@ -79,7 +79,7 @@ static double check_will_collide_pv(Vec dP, Vec dV, double avdia)
 }
 
 
-CollisionEvent *Ball::check_will_collide_minimum_image(Ball *other, double L) const
+CollisionEvent *Ball::check_will_collide_minimum_image(Ball *other, double L, double simtime) const
 {
   Vec dV = other->velocity - this->velocity;
   //Vec p1 = this->position - (this->position.floordiv(L)*L);
@@ -89,7 +89,7 @@ CollisionEvent *Ball::check_will_collide_minimum_image(Ball *other, double L) co
 
   double time = check_will_collide_pv(dP, dV, (this->diameter + other->diameter) / 2.0);
   if (time > 0.0) {
-    return new CollisionEvent(time, (Ball *)this, other, {0, 0, 0});
+    return new CollisionEvent(time+simtime, (Ball *)this, other, {0, 0, 0});
   }
   else {
     return NULL;
