@@ -71,5 +71,6 @@ class Sim {
 
     double get_kinetic_energy() const;
     double get_side_length() const;
+    double get_time() const;
 
 };

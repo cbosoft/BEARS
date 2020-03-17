@@ -95,3 +95,8 @@ double Sim::get_side_length() const
 {
   return this->side_length;
 }
+
+double Sim::get_time() const
+{
+  return this->time;
+}
