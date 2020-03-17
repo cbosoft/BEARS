@@ -11,7 +11,7 @@
 class ProgressBar {
   private:
 
-    int i, n, pp;
+    int n, i, previous_progress;
     bool printed, timed;
     double delay;
     std::chrono::time_point<CLOCK> start;
@@ -19,63 +19,72 @@ class ProgressBar {
 
   public:
 
-    inline ProgressBar(int n) : n(n)
+    ProgressBar(int n)
     {
+      this->n = n;
+      this->i = 0;
+      this->previous_progress = 0;
       this->printed = false;
       this->timed = false;
       this->name = NULL;
     }
 
-    inline ProgressBar(int n, const char *name) : ProgressBar(n)
+    ProgressBar(int n, const char *name)
     {
       this->name = name;
+      this->n = n;
+      this->i = 0;
+      this->previous_progress = 0;
+      this->printed = false;
+      this->timed = false;
+      this->name = NULL;
     }
 
-    inline ProgressBar(int n, double delay) : delay(delay)
+    ProgressBar(int n, double delay) : delay(delay)
     {
-      this-> n = n;
+      this->n = n;
       this->printed = false;
       this->timed = true;
       this->name = NULL;
       this->start = CLOCK::now();
+      this->i = 0;
+      this->previous_progress = 0;
     }
 
-    inline ProgressBar(int n, const char *name, double delay) : ProgressBar(n, delay)
+    ProgressBar(int n, const char *name, double delay) : ProgressBar(n, delay)
     {
       this->name = name;
     }
 
-    inline ~ProgressBar()
+    ~ProgressBar()
     {
       this->finish();
     }
 
 
-    inline void update()
+    void update()
     {
       this->update(1);
     }
 
-    inline void update(int di)
+    void update(int di)
     {
       this-> i += di;
-      int perc = this->i * 100;
-      perc /= this->n;
+      double fraction = double(this->i) / double(this->n);
 
       struct winsize ws;
       ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws);
-      int w = ws.ws_col - 2;
+      double w = double(ws.ws_col - 2);
 
 
-      int p = perc*w;
-      p /= 100;
+      int progress = int(fraction * w);
 
       auto now = CLOCK::now();
       double duration = double( (now - this->start).count() ) * CLOCK::period::num / CLOCK::period::den;
 
-      if ( (p == this->pp) or (this->timed and (duration < this->delay) ) ) return;
+      if ( (progress == this->previous_progress) or (this->timed and (duration < this->delay) ) ) return;
 
-      this->pp = p;
+      this->previous_progress = progress;
 
       std::stringstream ss;
       ss << "\r\033[K▉";
@@ -86,7 +95,7 @@ class ProgressBar {
         j = strlen(this->name);
       }
 
-      for (; j < p; j++) {
+      for (; j < progress; j++) {
         ss << "▉";
       }
 
