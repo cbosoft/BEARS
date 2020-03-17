@@ -8,3 +8,7 @@ vgcore*
 *.yaml
 *.pdf
 *.bin
+*.dot
+*.pdf
+gmon.out
+analysis.txt

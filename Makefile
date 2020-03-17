@@ -1,5 +1,5 @@
 CXX = g++
-CFLAGS = -g -Wall -Wextra -Werror -std=c++17 -O0
+CFLAGS = -g -pg -Wall -Wextra -Werror -std=c++17 -Ofast
 OBJ = \
 			obj/ball.o \
 			obj/ball_collision.o \
@@ -32,6 +32,11 @@ BEARS: obj/main.o $(OBJ)
 configgen: obj/config_main.o obj/config.o $(OBJ)
 	@echo -e "\u001b[34mLINKING OBJECTS TO EXECUTABLE $@\u001b[0m"
 	$(CXX) $(CFLAGS) $(DEFS) obj/config_main.o obj/config.o $(OBJ) -o $@ $(LINK)
+
+prof_pdf:
+	gprof BEARS gmon.out > analysis.txt
+	gprof2dot -o d.dot analysis.txt
+	dot -Tpdf d.dot > prof.pdf
 
 clean:
 	rm -rf obj $(EXE) configgen
