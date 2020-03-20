@@ -22,6 +22,9 @@ struct par_event_check_in {
 static struct par_event_check_out *parallelCollisionCheckWorker(struct par_event_check_in *input)
 {
   struct par_event_check_out *output = new struct par_event_check_out;
+
+  double L = input->sim->get_side_length();
+  double time = input->sim->get_time();
   
   for (auto i : input->invalid_indices) {
     auto a = input->sim->get_ball(i);
@@ -31,7 +34,7 @@ static struct par_event_check_out *parallelCollisionCheckWorker(struct par_event
       if (a == b)
         continue;
 
-      if (auto *event_ptr = a->check_will_collide_minimum_image(b, input->sim->get_side_length() )) {
+      if (auto *event_ptr = a->check_will_collide_minimum_image(b, L, time)) {
         output->events.push_back(event_ptr);
       }
 
