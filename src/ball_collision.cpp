@@ -40,7 +40,7 @@ void Ball::collide(Ball *other)
 
 }
 
-static double check_will_collide_pv(Vec dP, Vec dV, double avdia)
+static double check_will_collide_pv(const Vec &dP, const Vec &dV, double avdia)
 {
   double A = dV.dot(dV);
   double B = 2.0*dV.dot(dP);
