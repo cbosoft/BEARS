@@ -82,11 +82,12 @@ void Sim::parallel_update_events(std::set<unsigned int> invalid_indices)
 
 }
 
-void Sim::linear_update_events(std::set<unsigned int> invalid_indices)
+void Sim::linear_update_events(std::set<unsigned int> invalid_IDs)
 {
-  for (auto i : invalid_indices) {
+  for (auto ID : invalid_IDs) {
+    int i = ID - 1;
     auto a = this->balls[i];
-    for (unsigned int j = 0; j < i; j++) {
+    for (int j = 0; j < i; j++) {
       auto b = this->balls[j];
       if (auto *event_ptr = a->check_will_collide_minimum_image(b, this->side_length, this->time)) {
         this->events.push_back(event_ptr);
@@ -98,30 +99,29 @@ void Sim::linear_update_events(std::set<unsigned int> invalid_indices)
 static int removed = 0;
 void Sim::update_events()
 {
-  std::set<unsigned int> invalid_indices;
+  std::set<unsigned int> invalid_IDs;
 
   // only reprocess events for affected particles
   if (this->events.size()) {
 
-    invalid_indices = this->events.invalidate();
+    invalid_IDs = this->events.invalidate();
 
   }
   else {
 
     for (auto ball : this->balls) {
-      invalid_indices.insert(ball->get_id()-1);
+      invalid_IDs.insert(ball->get_id());
     }
 
   }
 
   if (this->nthreads > 1) {
-    this->parallel_update_events(invalid_indices);
+    this->parallel_update_events(invalid_IDs);
   }
   else {
-    this->linear_update_events(invalid_indices);
+    this->linear_update_events(invalid_IDs);
   }
 
-  this->events.sort(event_compare_f);
 }
 
 
@@ -163,7 +163,6 @@ void Sim::run(double end_time)
 
   std::signal(SIGINT, handler);
   this->time = 0.0;
-  // double ptime = 0.0;
 
   double event_duration = -1.0, output_duration = -1.0;
 
@@ -196,7 +195,7 @@ void Sim::run(double end_time)
     Ball *b = event->get_b();
 
     // particle interacts with specific image
-    b->set_image(event->get_image());
+    //b->set_image(event->get_image());
 
     // update all particle positions to the time of the event
     for (auto b: this->balls)
