@@ -19,6 +19,8 @@ std::set<unsigned int> EventCollection::invalidate()
   int aid = this->previous->get_a()->get_id();
   int bid = this->previous->get_b()->get_id();
   std::set<unsigned int> rv;
+  rv.insert(aid);
+  rv.insert(bid);
 
   for (auto it = this->events.begin(); it != this->events.end(); it++) {
     auto kv = *it;
