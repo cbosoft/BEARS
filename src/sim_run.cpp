@@ -15,7 +15,7 @@ struct par_event_check_out {
 
 struct par_event_check_in {
   Sim* sim;
-  std::vector<unsigned int> invalid_indices;
+  std::vector<unsigned int> invalid_IDs;
 };
 
 
@@ -26,7 +26,8 @@ static struct par_event_check_out *parallelCollisionCheckWorker(struct par_event
   double L = input->sim->get_side_length();
   double time = input->sim->get_time();
   
-  for (auto i : input->invalid_indices) {
+  for (auto ID : input->invalid_IDs) {
+    unsigned int i = ID - 1;
     auto a = input->sim->get_ball(i);
     for (unsigned int j = 0; j < i; j++) {
       auto b = input->sim->get_ball(j);
@@ -44,26 +45,26 @@ static struct par_event_check_out *parallelCollisionCheckWorker(struct par_event
   return output;
 }
 
-void Sim::parallel_update_events(std::set<unsigned int> invalid_indices)
+void Sim::parallel_update_events(std::set<unsigned int> invalid_IDs)
 {
   unsigned int nchunks = this->nthreads;
 
-  if (invalid_indices.size() % nchunks != 0)
+  if (invalid_IDs.size() % nchunks != 0)
     nchunks++;
 
-  unsigned int chunklen = invalid_indices.size() / nchunks;
+  unsigned int chunklen = invalid_IDs.size() / nchunks;
 
   std::vector<std::future<struct par_event_check_out *>> async_threads;
   std::vector<struct par_event_check_in *> inputs;
-  auto beg_it = invalid_indices.begin();
-  auto end_it = invalid_indices.begin();
+  auto beg_it = invalid_IDs.begin();
+  auto end_it = invalid_IDs.begin();
   std::advance(end_it, chunklen);
   for (unsigned int i = 0; i < nchunks; i++) {
     struct par_event_check_in *input = new struct par_event_check_in;
-    std::vector<unsigned int> invalid_indices_chunk(beg_it, end_it);
+    std::vector<unsigned int> invalid_IDs_chunk(beg_it, end_it);
     std::advance(beg_it, chunklen);
     std::advance(end_it, chunklen);
-    input->invalid_indices = invalid_indices_chunk;
+    input->invalid_IDs = invalid_IDs_chunk;
     input->sim = this;
     inputs.push_back(input);
     async_threads.push_back(std::async(parallelCollisionCheckWorker, input));
