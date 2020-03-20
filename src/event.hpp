@@ -48,6 +48,9 @@ class CollisionEvent {
     {
       return this->image;
     }
+
+    std::pair<int, int> get_idpair() const;
+
 };
 
 
