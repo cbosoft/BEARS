@@ -23,6 +23,9 @@ class CollisionEvent {
       this->time = t;
       this->a = a;
       this->b = b;
+    }
+    CollisionEvent(double t, Ball *a, Ball *b, Vec image) : CollisionEvent(t, a, b)
+    {
       this->image = image;
     }
 
