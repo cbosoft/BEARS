@@ -14,10 +14,10 @@ std::pair<int, int> CollisionEvent::get_idpair() const
   }
 }
 
-std::set<unsigned int> EventCollection::invalidate()
+std::set<unsigned int> EventCollection::invalidate(CollisionEvent *ev)
 {
-  int aid = this->previous->get_a()->get_id();
-  int bid = this->previous->get_b()->get_id();
+  int aid = ev->get_a()->get_id();
+  int bid = ev->get_b()->get_id();
   std::set<unsigned int> rv;
   rv.insert(aid);
   rv.insert(bid);

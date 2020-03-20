@@ -65,14 +65,11 @@ class EventCollection {
   private:
 
     std::map<std::pair<int, int>, CollisionEvent *> events;
-    CollisionEvent *previous;
-
 
   public:
 
     EventCollection()
     {
-      this->previous = NULL;
     }
 
     ~EventCollection() 
@@ -90,7 +87,7 @@ class EventCollection {
       this->events[pair] = event;
     }
 
-    std::set<unsigned int> invalidate();
+    std::set<unsigned int> invalidate(CollisionEvent *ev);
 
     void merge(EventCollection &other)
     {
@@ -126,16 +123,8 @@ class EventCollection {
       // get invalid indices
       // TODO
 
-      // set value
-      this->previous = rv;
-
       // return value
       return rv;
-    }
-
-    CollisionEvent *get_previous()
-    {
-      return this->previous;
     }
 
     size_t size() const

@@ -41,7 +41,12 @@ class Ball {
     double inertia;
     double diameter;
 
+    EventCollection events;
+
     const Sim *parent;
+
+    CollisionEvent *check_will_collide_image(Ball *other, Vec image) const;
+    CollisionEvent *check_will_collide_minimum_image(Ball *other, double L, double simtime) const;
 
   public:
 
@@ -66,7 +71,9 @@ class Ball {
     static std::string tsv_headings();
     static uint32_t bin_nbytes();
 
-    CollisionEvent *check_will_collide_image(Ball *other, Vec image) const;
-    CollisionEvent *check_will_collide_minimum_image(Ball *other, double L, double simtime) const;
+    void update(CollisionEvent *ev);
+
+    CollisionEvent *next();
+    CollisionEvent *update_and_get_next(CollisionEvent *ev);
 
 };

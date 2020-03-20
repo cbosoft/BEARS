@@ -181,4 +181,3 @@ uint32_t *Ball::to_bin() const
   return rv;
 }
 
-#undef OUTPUT

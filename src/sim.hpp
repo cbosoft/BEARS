@@ -27,9 +27,9 @@ class Sim {
     std::string config_file_path;
     std::string config_file_extension;
 
-    void parallel_update_events(std::set<unsigned int> invalid_indices);
-    void linear_update_events(std::set<unsigned int> invalid_indices);
-    void update_events();
+    void parallel_update_events(CollisionEvent *ev);
+    void linear_update_events(CollisionEvent *ev);
+    void update_events(CollisionEvent *ev);
 
     void init_trajectory_tsv() const;
     void append_to_trajectory_tsv(uint32_t, uint32_t) const;
@@ -72,4 +72,5 @@ class Sim {
     double get_side_length() const;
     double get_time() const;
 
+    friend Ball;
 };

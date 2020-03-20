@@ -111,3 +111,29 @@ CollisionEvent *Ball::check_will_collide_image(Ball *other, Vec image) const
   }
 
 }
+
+
+CollisionEvent *Ball::next()
+{
+  return this->events.front();
+}
+
+void Ball::update(CollisionEvent *ev)
+{
+  (void) ev;
+  // doing nothing with ev now, but will use in future to only recalculate the
+  // necessary new events (i.e. for balls which were effected by the previous
+  // event).
+
+  for (auto ball : this->parent->balls) {
+    CollisionEvent *ev = this->check_will_collide_minimum_image(ball, this->parent->side_length, this->parent->time);
+    if (ev)
+      this->events.push_back(ev);
+  }
+}
+
+CollisionEvent *Ball::update_and_get_next(CollisionEvent *ev)
+{
+  this->update(ev);
+  return this->next();
+}
