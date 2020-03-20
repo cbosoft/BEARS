@@ -14,23 +14,26 @@ OBJ = \
 			obj/event.o \
 			obj/vec.o \
 			obj/random.o
-
+HDR = src/event.hpp \
+			src/sim.hpp \
+			src/bfstream.hpp \
+			src/colour.hpp
 LINK = -lpthread
 EXE = BEARS
 DEFS = 
 
 .SECONDARY:
 
-obj/%.o: src/%.cpp
+obj/%.o: src/%.cpp $(HDR)
 	@echo -e "\u001b[33mASSEMBLING OBJECT $@\u001b[0m"
 	mkdir -p `dirname $@`
 	$(CXX) $(CFLAGS) $(DEFS) $< -c -o $@
 
-BEARS: obj/main.o $(OBJ)
+BEARS: obj/main.o $(OBJ) $(HDR)
 	@echo -e "\u001b[34mLINKING OBJECTS TO EXECUTABLE $@\u001b[0m"
 	$(CXX) $(CFLAGS) $(DEFS) obj/main.o $(OBJ) -o $@ $(LINK)
 
-configgen: obj/config_main.o obj/config.o $(OBJ)
+configgen: obj/config_main.o obj/config.o $(OBJ) $(HDR)
 	@echo -e "\u001b[34mLINKING OBJECTS TO EXECUTABLE $@\u001b[0m"
 	$(CXX) $(CFLAGS) $(DEFS) obj/config_main.o obj/config.o $(OBJ) -o $@ $(LINK)
 
