@@ -11,6 +11,7 @@ OBJ = \
 			obj/sim_traj.o \
 			obj/sim.o \
 			obj/version.o \
+			obj/event.o \
 			obj/vec.o \
 			obj/random.o
 
