@@ -1,6 +1,7 @@
 tags
 *.o
 *.tsv
+*.ssv
 BEARS
 *gen
 vgcore*
