@@ -14,8 +14,7 @@ class Sim {
 
   private:
 
-    std::list<CollisionEvent *> events;
-    std::set<std::pair<int, int>> events_pairs; // high id, low id
+    EventCollection events;
     std::vector<Ball *> balls; // TODO: array
     double time;
     int nthreads;

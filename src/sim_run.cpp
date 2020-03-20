@@ -10,7 +10,7 @@
 
 
 struct par_event_check_out {
-  std::list<CollisionEvent *> events;
+  EventCollection events;
 };
 
 struct par_event_check_in {
@@ -22,7 +22,6 @@ struct par_event_check_in {
 static struct par_event_check_out *parallelCollisionCheckWorker(struct par_event_check_in *input)
 {
   struct par_event_check_out *output = new struct par_event_check_out;
-  output->events = std::list<CollisionEvent *>();
   
   for (auto i : input->invalid_indices) {
     auto a = input->sim->get_ball(i);
@@ -68,19 +67,16 @@ void Sim::parallel_update_events(std::set<unsigned int> invalid_indices)
   }
 
   for (unsigned int i = 0; i < nchunks; i++) {
+
+    // get thread's result, merge into master event list
     struct par_event_check_out *output = async_threads[i].get();
+    this->events.merge(output->events);
+
+    // tidy up memory
     delete inputs[i];
-    for (auto event_ptr : output->events) {
-      int aid = event_ptr->get_a()->get_id();
-      int bid = event_ptr->get_b()->get_id();
-      auto idpair = std::make_pair(aid>bid?aid:bid, aid>bid?bid:aid);
-      if (this->events_pairs.find(idpair) == this->events_pairs.end()) {
-        this->events.push_back(event_ptr);
-        this->events_pairs.insert(idpair);
-      }
-    }
     delete output;
   }
+
 }
 
 void Sim::linear_update_events(std::set<unsigned int> invalid_indices)
@@ -89,14 +85,8 @@ void Sim::linear_update_events(std::set<unsigned int> invalid_indices)
     auto a = this->balls[i];
     for (unsigned int j = 0; j < i; j++) {
       auto b = this->balls[j];
-      if (auto *event_ptr = a->check_will_collide_minimum_image(b, this->side_length)) {
-        int aid = event_ptr->get_a()->get_id();
-        int bid = event_ptr->get_b()->get_id();
-        auto idpair = std::make_pair(aid>bid?aid:bid, aid>bid?bid:aid);
-        if (this->events_pairs.find(idpair) == this->events_pairs.end()) {
-          this->events.push_back(event_ptr);
-          this->events_pairs.insert(idpair);
-        }
+      if (auto *event_ptr = a->check_will_collide_minimum_image(b, this->side_length, this->time)) {
+        this->events.push_back(event_ptr);
       }
     }
   }
@@ -108,29 +98,9 @@ void Sim::update_events()
   std::set<unsigned int> invalid_indices;
 
   // only reprocess events for affected particles
-  if (auto ran_event = this->events.front()) {
+  if (this->events.size()) {
 
-    Ball *a = ran_event->get_a();
-    Ball *b = ran_event->get_b();
-    
-    removed = 0;
-    for (auto it = this->events.begin(); it != this->events.end(); it++) {
-
-      const auto &event = (*it);
-      Ball *ev_a = event->get_a();
-      Ball *ev_b = event->get_b();
-      int aid = ev_a->get_id(), bid = ev_b->get_id();
-      auto idpair = std::make_pair(aid>bid?aid:bid, aid>bid?bid:aid);
-
-      if ((ev_a == a) || (ev_a == b) || (ev_b == a) || (ev_b == b)) {
-        invalid_indices.insert(ev_a->get_id()-1);
-        invalid_indices.insert(ev_b->get_id()-1);
-        this->events.erase(it++);
-        this->events_pairs.erase(idpair);
-        removed++;
-      }
-
-    }
+    invalid_indices = this->events.invalidate();
 
   }
   else {
