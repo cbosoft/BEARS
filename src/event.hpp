@@ -12,17 +12,17 @@ class CollisionEvent {
 
   private:
     double time;
-    Ball *balls[2];
+    Ball *a, *b;
     Vec image;
 
   public:
 
     CollisionEvent() =default;
-    CollisionEvent(double t, Ball *a, Ball *b, Vec image)
+    CollisionEvent(double t, Ball *a, Ball *b)
     {
       this->time = t;
-      this->balls[0] = a;
-      this->balls[1] = b;
+      this->a = a;
+      this->b = b;
       this->image = image;
     }
 
@@ -33,12 +33,12 @@ class CollisionEvent {
 
     Ball *get_a() const
     {
-      return this->balls[0];
+      return this->a;
     }
 
     Ball *get_b() const
     {
-      return this->balls[1];
+      return this->b;
     }
 
     Vec get_image() const
