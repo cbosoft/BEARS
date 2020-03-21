@@ -58,7 +58,7 @@ int main(void)
     Ball *b = new Ball(bcd);
 
     CollisionEvent *ev = a->check_will_collide_minimum_image(b, 100.0, 0.0);
-    test_neq("1. " BOLD "ballistic pair " RESET "(event not nullptr)", ev, (CollisionEvent *)nullptr);
+    test_neq("1. " BOLD "ballistic pair " RESET "(event occurs)", ev, (CollisionEvent *)nullptr);
     test_eq("2. " BOLD "ballistic pair " RESET "(event time correct)", ev->get_time(), 2.0);
     delete ev;
     delete a;
@@ -70,11 +70,54 @@ int main(void)
     bcd.velocity = {0, 0, 0};
     Ball *a = new Ball(bcd);
     bcd.position = {3, 0, 0.99999}; // 2 units between particles in x, 1 in z
-    bcd.velocity = {-1, 0, 0}; // 1 unit distance per unit time: 3 time units to collide (tip to tip)
+    bcd.velocity = {-1, 0, 0}; // 1 unit distance per unit time: 3 time units to collide
     Ball *b = new Ball(bcd);
     CollisionEvent *ev = a->check_will_collide_minimum_image(b, 100.0, 0.0);
-    test_neq("3. " BOLD "ballistic pair (glancing) " RESET "(event not nullptr)", ev, (CollisionEvent *)nullptr);
+    test_neq("3. " BOLD "ballistic pair (glancing) " RESET "(event occurs)", ev, (CollisionEvent *)nullptr);
     test_approx("4. " BOLD "ballistic pair (glancing) " RESET "(event time correct)", ev->get_time(), 3.0, 0.01);
+    delete ev;
+    delete a;
+    delete b;
+  }
+
+  {
+    bcd.position = {0, 0, 0};
+    bcd.velocity = {0, 0, 0};
+    Ball *a = new Ball(bcd);
+    bcd.position = {3, 0, 3}; // 2 units between particles in x, 2 in z
+    bcd.velocity = {-1, 0, 0}; // particles will never collide
+    Ball *b = new Ball(bcd);
+    CollisionEvent *ev = a->check_will_collide_minimum_image(b, 100.0, 0.0);
+    test_eq("5. " BOLD "ballistic pair (miss) " RESET "(event does not occur)", ev, (CollisionEvent *)nullptr);
+    delete a;
+    delete b;
+  }
+
+  {
+    bcd.position = {1, 1, 1};
+    bcd.velocity = {0, 0, 0};
+    Ball *a = new Ball(bcd);
+    bcd.position = {7, 1, 1}; // 6 units between particles in x: actually only 3
+    bcd.velocity = {1, 0, 0}; // 1 unit distance per unit time: 3 time units to collide
+    Ball *b = new Ball(bcd);
+    CollisionEvent *ev = a->check_will_collide_minimum_image(b, 10.0, 0.0);
+    test_neq("6. " BOLD "ballistic pair (periodic 1) " RESET "(event occurs)", ev, (CollisionEvent *)nullptr);
+    test_eq("7. " BOLD "ballistic pair (periodic 1) " RESET "(event time correct)", ev->get_time(), 3.0);
+    delete ev;
+    delete a;
+    delete b;
+  }
+
+  {
+    bcd.position = {1, 1, 1};
+    bcd.velocity = {0, 0, 0};
+    Ball *a = new Ball(bcd);
+    bcd.position = {13, 1, 1}; // 12 units between particles in x: actually only 1
+    bcd.velocity = {-1, 0, 0}; // 1 unit distance per unit time: 1 time units to collide
+    Ball *b = new Ball(bcd);
+    CollisionEvent *ev = a->check_will_collide_minimum_image(b, 10.0, 0.0);
+    test_neq("8. " BOLD "ballistic pair (periodic 2) " RESET "(event occurs)", ev, (CollisionEvent *)nullptr);
+    test_eq("9. " BOLD "ballistic pair (periodic 2) " RESET "(event time correct)", ev->get_time(), 1.0);
     delete ev;
     delete a;
     delete b;
