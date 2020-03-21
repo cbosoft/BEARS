@@ -92,7 +92,7 @@ CollisionEvent *Ball::check_will_collide_minimum_image(Ball *other, double L, do
     return new CollisionEvent(time+simtime, (Ball *)this, other, {0, 0, 0});
   }
   else {
-    return NULL;
+    return nullptr;
   }
 
 }
@@ -107,7 +107,7 @@ CollisionEvent *Ball::check_will_collide_image(Ball *other, Vec image) const
     return new CollisionEvent(time, (Ball *)this, other, image);
   }
   else {
-    return NULL;
+    return nullptr;
   }
 
 }
