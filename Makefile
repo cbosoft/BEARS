@@ -33,6 +33,10 @@ BEARS: obj/main.o $(OBJ) $(HDR)
 	@echo -e "\u001b[34mLINKING OBJECTS TO EXECUTABLE $@\u001b[0m"
 	$(CXX) $(CFLAGS) $(DEFS) obj/main.o $(OBJ) -o $@ $(LINK)
 
+test: tests/test.cpp $(OBJ) $(HDR)
+	@echo -e "\u001b[34mLINKING OBJECTS TO EXECUTABLE $@\u001b[0m"
+	$(CXX) $(CFLAGS) $(DEFS) tests/test.cpp $(OBJ) -o $@ $(LINK)
+
 configgen: obj/config_main.o obj/config.o $(OBJ) $(HDR)
 	@echo -e "\u001b[34mLINKING OBJECTS TO EXECUTABLE $@\u001b[0m"
 	$(CXX) $(CFLAGS) $(DEFS) obj/config_main.o obj/config.o $(OBJ) -o $@ $(LINK)
