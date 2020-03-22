@@ -41,6 +41,9 @@ void Sim::init_trajectory_bin() const
 void Sim::init_trajectory()
 {
 
+  if (not this->should_output_trajectory)
+    return;
+
   if (this->trajectory_file_extension.compare("tsv") == 0) {
     init_trajectory_tsv();
   }
@@ -98,6 +101,9 @@ void Sim::append_to_trajectory() const
 
 void Sim::append_to_trajectory(int aid, int bid) const
 {
+  if (not this->should_output_trajectory)
+    return;
+
   if (this->trajectory_file_extension.compare("tsv") == 0) {
     append_to_trajectory_tsv(aid, bid);
   }

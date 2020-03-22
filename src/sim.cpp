@@ -19,6 +19,7 @@ Sim::Sim()
   this->trajectory_file_path = "traj.tsv";
   this->periodic_boundaries = true;
   this->set_side_length(1.0);
+  this->should_output_trajectory = true;
 }
 
 
@@ -99,4 +100,9 @@ double Sim::get_side_length() const
 double Sim::get_time() const
 {
   return this->time;
+}
+
+void Sim::set_should_output_trajectory(bool v)
+{
+  this->should_output_trajectory = v;
 }
