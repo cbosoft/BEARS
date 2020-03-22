@@ -110,6 +110,9 @@ struct ConfigArgs parse_args(int argc, const char **argv)
     else if (EITHER("-p", "--path")) {
       args.path = argv[++i];
     }
+    else if (EITHER("-o", "--output")) {
+      args.path = argv[++i];
+    }
     else if (EITHER("-t", "--config-type")) {
       args.config_type = argv[++i];
     }
