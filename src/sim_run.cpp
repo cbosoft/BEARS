@@ -200,6 +200,13 @@ void Sim::run(double end_time)
 
   std::signal(SIGINT, SIG_DFL);
 
-  std::ofstream ostr("benchmark.csv");
+  std::ofstream ostr("benchmark.csv", std::ios::app);
+
+  if (ostr.fail()) {
+    ostr.open("benchmark.csv");
+    if (ostr.fail()) {
+      std::cerr << "Could not open \"benchmark.csv\" for write." << std::endl;
+    }
+  }
   ostr << BRANCH << "," << this->nthreads << "," << this->balls.size() << "," << (total_time_to_update / number_updates) << std::endl;
 }
