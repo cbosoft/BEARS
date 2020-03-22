@@ -45,8 +45,6 @@ class Ball {
 
     const Sim *parent;
 
-    CollisionEvent *check_will_collide_image(Ball *other, Vec image) const;
-    CollisionEvent *check_will_collide_minimum_image(Ball *other, double L, double simtime) const;
 
   public:
 
@@ -75,5 +73,7 @@ class Ball {
 
     CollisionEvent *next();
     CollisionEvent *update_and_get_next(CollisionEvent *ev);
+    CollisionEvent *check_will_collide_image(Ball *other, Vec image) const;
+    CollisionEvent *check_will_collide_minimum_image(Ball *other, double L, double simtime) const;
 
 };
