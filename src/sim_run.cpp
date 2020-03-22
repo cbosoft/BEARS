@@ -4,6 +4,7 @@
 #include <chrono>
 #include <future>
 #include <set>
+#include <ctime>
 
 #include "sim.hpp"
 #include "colour.hpp"
@@ -245,5 +246,6 @@ void Sim::run(double end_time)
       std::cerr << "Could not open \"benchmark.csv\" for write." << std::endl;
     }
   }
-  ostr << BRANCH << "," << this->nthreads << "," << this->balls.size() << "," << (total_time_to_update / number_updates) << std::endl;
+  std::time_t t = std::time(nullptr);
+  ostr << t << "," << BRANCH << "," << this->nthreads << "," << this->balls.size() << "," << (total_time_to_update / number_updates) << std::endl;
 }
