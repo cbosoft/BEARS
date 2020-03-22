@@ -19,6 +19,7 @@ class Sim {
     double time;
     int nthreads;
     bool periodic_boundaries;
+    bool should_output_trajectory;
     double side_length;
     double inv_side_length;
 
@@ -64,6 +65,7 @@ class Sim {
     void set_parallel(int nthreads);
     void set_config_file(std::string s);
     void set_trajectory_file(std::string s);
+    void set_should_output_trajectory(bool v);
     Vec enforce_bounds(const Vec &p1, const Vec &p2) const;
     Vec enforce_bounds(const Vec &p) const;
 

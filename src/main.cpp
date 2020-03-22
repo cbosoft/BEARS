@@ -14,11 +14,13 @@ int main(int argc, const char **argv)
     std::string output_file_path;
     double end_time;
     int nthreads;
+    bool should_output_trajectory;
   } args = {
     "config.tsv", 
     "traj.tsv",
     1.0,
-    1
+    1,
+    true
   };
 
   // TODO: improve arg parsing
@@ -33,6 +35,7 @@ int main(int argc, const char **argv)
     }
     else if (EITHER("-o", "--output-file")) {
       args.output_file_path = std::string(argv[++i]);
+      args.should_output_trajectory = true;
     }
     else if (EITHER("-t", "--end-time")) {
       args.end_time = atof(argv[++i]);
@@ -43,6 +46,9 @@ int main(int argc, const char **argv)
     else if (EITHER("-n", "--number-threads")) {
       args.nthreads = atoi(argv[++i]);
     }
+    else if (strcmp(argv[i], "--no-trajectory") == 0) {
+      args.should_output_trajectory = false;
+    }
     else {
       std::cerr << "unknown arg: " << argv[i] << std::endl;
       exit(1);
@@ -52,6 +58,8 @@ int main(int argc, const char **argv)
   print_header();
   std::cerr << "Setting up..." << std::endl;
   Sim sim(args.config_file_path, args.output_file_path);
+
+  sim.set_should_output_trajectory(args.should_output_trajectory);
 
   if (args.nthreads > 1) {
     sim.set_parallel(args.nthreads);
