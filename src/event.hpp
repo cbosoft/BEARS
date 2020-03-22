@@ -106,25 +106,27 @@ class EventCollection {
       return rv;
     }
 
-    std::list<CollisionEvent *> get_sorted_list() const
+    CollisionEvent *get_next_event() const
     {
-      std::list<CollisionEvent *> rv = this->get_list();
-      rv.sort(event_compare_f);
+      CollisionEvent *rv = nullptr;
+      double event_time = -1;
+      for (auto kv : this->events) {
+        CollisionEvent *ev = kv.second;
+        double t = ev->get_time();
+        if ( (rv == nullptr) or (t < event_time) ) {
+          rv = ev;
+          event_time = t;
+        }
+      }
       return rv;
     }
 
     CollisionEvent *front()
     {
-      auto l = this->get_sorted_list();
-
-      // get next event
-      auto rv = l.front();
+      auto rv = this->get_next_event();
 
       // remove from store
       this->events.erase(this->events.find(rv->get_idpair()));
-
-      // get invalid indices
-      // TODO
 
       // set value
       this->previous = rv;
