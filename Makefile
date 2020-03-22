@@ -36,6 +36,9 @@ BEARS: obj/main.o $(OBJ) $(HDR)
 test: tests/test.cpp $(OBJ) $(HDR)
 	@echo -e "\u001b[34mLINKING OBJECTS TO EXECUTABLE $@\u001b[0m"
 	$(CXX) $(CFLAGS) $(DEFS) tests/test.cpp $(OBJ) -o $@ $(LINK)
+	@echo -e "\u001b[34mRUNNING TESTS $@\u001b[0m"
+	./test
+
 
 configgen: obj/config_main.o obj/config.o $(OBJ) $(HDR)
 	@echo -e "\u001b[34mLINKING OBJECTS TO EXECUTABLE $@\u001b[0m"
