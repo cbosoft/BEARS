@@ -118,12 +118,15 @@ CollisionEvent *Ball::next()
   return this->events.front();
 }
 
-void Ball::update(CollisionEvent *ev)
+void Ball::update(CollisionEvent *previous_event)
 {
-  (void) ev;
-  // doing nothing with ev now, but will use in future to only recalculate the
-  // necessary new events (i.e. for balls which were effected by the previous
-  // event).
+  if (previous_event != nullptr) {
+    Ball *a = previous_event->get_a();
+    Ball *b = previous_event->get_b();
+
+    if ((a != this) and (b != this))
+      return;
+  }
 
   for (auto ball : this->parent->balls) {
     CollisionEvent *ev = this->check_will_collide_minimum_image(ball, this->parent->side_length, this->parent->time);
