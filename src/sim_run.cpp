@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <csignal>
 #include <chrono>
 #include <future>
@@ -8,6 +9,9 @@
 #include "colour.hpp"
 #include "event.hpp"
 #include "threadsafe_queue.hpp"
+#include "version.hpp"
+
+#define CLOCK std::chrono::steady_clock
 
 
 struct par_event_check_out {
@@ -78,6 +82,7 @@ void Sim::linear_update_events(CollisionEvent *ev)
 
 void Sim::update_events(CollisionEvent *ev)
 {
+
   if (this->nthreads > 1) {
     this->parallel_update_events(ev);
   }
@@ -130,16 +135,21 @@ void Sim::run(double end_time)
   double event_duration = -1.0, output_duration = -1.0;
   CollisionEvent *event = nullptr;
 
+  double total_time_to_update = 0.0;
+  int number_updates = 0;
+
   while (!done) {
-#define CLOCK std::chrono::steady_clock
+
     {
       auto before = CLOCK::now();
       this->update_events(event);
       auto after = CLOCK::now();
       event_duration = static_cast<double>((after - before).count()) * CLOCK::duration::period::num / CLOCK::duration::period::den;
       before = after;
+
+      total_time_to_update += event_duration;
+      number_updates ++;
     }
-#undef CLOCK
 
 
     if (!this->events.size()) {
@@ -169,7 +179,6 @@ void Sim::run(double end_time)
     // update the interacting particle velocities and stuff
     a->collide(b);
 
-#define CLOCK std::chrono::steady_clock
     {
       auto before = CLOCK::now();
       this->append_to_trajectory(a->get_id(), b->get_id());
@@ -177,7 +186,6 @@ void Sim::run(double end_time)
       output_duration = static_cast<double>((after - before).count()) * CLOCK::duration::period::num / CLOCK::duration::period::den;
       before = after;
     }
-#undef CLOCK
 
     // display some statistics
     std::cerr << "t= " << this->time 
@@ -191,4 +199,7 @@ void Sim::run(double end_time)
   }
 
   std::signal(SIGINT, SIG_DFL);
+
+  std::ofstream ostr("benchmark.csv");
+  ostr << BRANCH << "," << this->nthreads << "," << this->balls.size() << "," << (total_time_to_update / number_updates) << std::endl;
 }
