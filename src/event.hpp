@@ -81,6 +81,9 @@ class EventCollection {
 
     void push_back(CollisionEvent *event)
     {
+      if (event == nullptr)
+        return;
+
       auto pair = event->get_idpair();
       if (this->events.find(pair) != this->events.end())
         delete this->events[pair];
@@ -107,6 +110,7 @@ class EventCollection {
     {
       CollisionEvent *rv = nullptr;
       double event_time = -1;
+
       for (auto kv : this->events) {
         CollisionEvent *ev = kv.second;
         double t = ev->get_time();
@@ -115,6 +119,7 @@ class EventCollection {
           event_time = t;
         }
       }
+
       return rv;
     }
 
@@ -123,7 +128,8 @@ class EventCollection {
       auto rv = this->get_next_event();
 
       // remove from store
-      this->events.erase(this->events.find(rv->get_idpair()));
+      if (rv)
+        this->events.erase(this->events.find(rv->get_idpair()));
 
       // return value
       return rv;
