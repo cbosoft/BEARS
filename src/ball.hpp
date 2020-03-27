@@ -12,6 +12,7 @@ struct BallConstructorData {
   double mass;
   double inertia;
   double roughness;
+  double COR;
   Vec position;
   Vec orientation;
   Vec velocity;
@@ -40,6 +41,7 @@ class Ball {
     double mass;
     double inertia;
     double diameter;
+    double COR, hCOR;
 
     const Sim *parent;
 

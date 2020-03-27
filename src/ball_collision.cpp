@@ -13,7 +13,7 @@ void Ball::collide(Ball *other)
   // TODO: what if COR != 1.0?
   // TODO: sort out notation 1,2 v *this,other*? *long names* v short names?
 
-  const double COR = 1.0;
+  double COR = this->hCOR + other->hCOR;
   Vec relative_position = other->position - this->position;
   Vec impulse_unit_normal = relative_position / relative_position.magnitude();
   Vec collision_point = this->position + (relative_position * this->diameter / (this->diameter + other->diameter) );

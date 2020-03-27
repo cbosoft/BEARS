@@ -10,6 +10,8 @@ Ball::Ball(const struct BallConstructorData &bcd)
   this->inertia = bcd.inertia;
   this->diameter = bcd.diameter;
   this->roughness = bcd.roughness;
+  this->COR = bcd.COR;
+  this->hCOR = 0.5*bcd.COR;
 
   this->position = bcd.position;
   this->orientation = bcd.orientation;
@@ -28,7 +30,8 @@ Ball::Ball(const std::string s)
     >> this->mass
     >> this->inertia
     >> this->diameter
-    >> this->roughness;
+    >> this->roughness
+    >> this->COR;
 
   double x, y, z;
   ss >> x; ss >> y; ss >> z;
@@ -59,6 +62,7 @@ std::string Ball::tsv_headings()
     << "\tinertia"
     << "\tdiameter"
     << "\troughness"
+    << "\tCOR"
     << "\tpositionx\tpositiony\tpositionz"
     << "\torientationx\torientationy\torientationz"
     << "\tvelocityx\tvelocityy\tvelocityz"
@@ -78,6 +82,7 @@ std::string Ball::to_tsv() const
     << "\t" << this->inertia 
     << "\t" << this->diameter 
     << "\t" << this->roughness 
+    << "\t" << this->COR
     << "\t" << this->position.to_tsv() 
     << "\t" << this->orientation.to_tsv() 
     << "\t" << this->velocity.to_tsv() 

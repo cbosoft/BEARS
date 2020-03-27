@@ -6,12 +6,20 @@
 
 struct BallConstructorData prep_bcd(const struct ConfigArgs &args)
 {
-  struct BallConstructorData bcd;
-  bcd.id = 0;
-  bcd.mass = args.mass;
-  bcd.diameter = args.diameter;
-  bcd.roughness = args.roughness;
-  bcd.inertia = args.mass * args.diameter * args.diameter * 0.1;
+  struct BallConstructorData bcd = {
+  .id = 0,
+  .diameter = args.diameter,
+  .mass = args.mass,
+  .inertia = args.mass * args.diameter * args.diameter * 0.1,
+  .roughness = args.roughness,
+  .COR = 1.0,
+  .position = {0.0, 0.0, 0.0},
+  .orientation = {0.0, 0.0, 0.0},
+  .velocity = {0.0, 0.0, 0.0},
+  .angular_velocity = {0.0, 0.0, 0.0},
+  .force = {0.0, 0.0, 0.0},
+  .torque = {0.0, 0.0, 0.0}
+  };
   return bcd;
 }
 
