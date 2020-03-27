@@ -9,34 +9,59 @@ void Ball::collide(Ball *other)
   // Using impulsive collision method outlined on wikipedia:
   // https://en.wikipedia.org/wiki/Collision_response
   
-  // TODO: add friction
-  // TODO: what if COR != 1.0?
-  // TODO: sort out notation 1,2 v *this,other*? *long names* v short names?
-
   double COR = this->hCOR + other->hCOR;
   Vec relative_position = other->position - this->position;
   Vec impulse_unit_normal = relative_position / relative_position.magnitude();
   Vec collision_point = this->position + (relative_position * this->diameter / (this->diameter + other->diameter) );
-  Vec r1 = collision_point - this->position;
-  Vec r2 = collision_point - other->position;
-  Vec relative_contact_velocity = other->velocity + other->angular_velocity.cross(r2) - 
-    this->velocity - this->angular_velocity.cross(r1);
+  Vec rthis = collision_point - this->position;
+  Vec rother = collision_point - other->position;
+  Vec relative_contact_velocity = other->velocity + other->angular_velocity.cross(rother) - 
+    this->velocity - this->angular_velocity.cross(rthis);
 
   double relative_velocity_dot_n = relative_contact_velocity.dot(impulse_unit_normal);
   double numerator = (-1. - COR) * relative_velocity_dot_n;
   double denominator_pt_1 = (1./this->mass) + (1./other->mass);
-  Vec denominator_pt_vec_1 = r1.cross(impulse_unit_normal).cross(r1) / this->inertia;
-  Vec denominator_pt_vec_2 = r2.cross(impulse_unit_normal).cross(r2) / other->inertia;
-  double denominator = denominator_pt_1 + impulse_unit_normal.dot(denominator_pt_vec_1 + denominator_pt_vec_2);
+  Vec denominator_pt_vec_this = rthis.cross(impulse_unit_normal).cross(rthis) / this->inertia;
+  Vec denominator_pt_vec_other = rother.cross(impulse_unit_normal).cross(rother) / other->inertia;
+  double denominator = denominator_pt_1 + impulse_unit_normal.dot(denominator_pt_vec_this + denominator_pt_vec_other);
   double impulse_magnitude = numerator / denominator;
 
-  this->velocity = this->velocity - (impulse_unit_normal * impulse_magnitude / this->mass);
-  other->velocity = other->velocity + (impulse_unit_normal * impulse_magnitude / other->mass);
+  this->angular_velocity = this->angular_velocity - (impulse_unit_normal.cross(rthis) * impulse_magnitude / this->inertia);
+  other->angular_velocity = other->angular_velocity + (impulse_unit_normal.cross(rother) * impulse_magnitude / other->inertia);
 
-  this->angular_velocity = this->angular_velocity - (impulse_unit_normal.cross(r1) * impulse_magnitude / this->inertia);
-  other->angular_velocity = other->angular_velocity + (impulse_unit_normal.cross(r2) * impulse_magnitude / other->inertia);
+  Vec tr;
+  bool is_direct = relative_velocity_dot_n != 0.0;
+  if (is_direct) {
+    tr = relative_contact_velocity - (impulse_unit_normal * relative_velocity_dot_n);
+    tr = tr / tr.magnitude();
+  }
+  // TODO: force balance
+  //else if () {
+  //}
+  else {
+    return;
+  }
 
+  // TODO: are the roughness parameters enough to decide the friction for the
+  // system?
+  const double static_friction_coef = 0.5;
+  const double dynamic_friction_coef = 0.3;
 
+  double mvr_dot_tr_this = (relative_contact_velocity * this->mass).dot(tr);
+  double mvr_dot_tr_other = (relative_contact_velocity * other->mass).dot(tr);
+  bool is_static_this, is_static_other;
+  if (tr.dot(relative_contact_velocity) == 0.0) {
+    is_static_this = is_static_other = true;
+  }
+  else {
+    is_static_this = mvr_dot_tr_this <= static_friction_coef;
+    is_static_other = mvr_dot_tr_other <= static_friction_coef;
+  }
+  Vec friction_impulse_this = is_static_this ? (tr*-mvr_dot_tr_this) : (tr*-dynamic_friction_coef);
+  Vec friction_impulse_other = is_static_other ? (tr*-mvr_dot_tr_other) : (tr*-dynamic_friction_coef);
+
+  this->velocity = this->velocity - (impulse_unit_normal * impulse_magnitude / this->mass) + (friction_impulse_this / this->mass);
+  other->velocity = other->velocity + (impulse_unit_normal * impulse_magnitude / other->mass) + (friction_impulse_other / this->mass);
 
 }
 
